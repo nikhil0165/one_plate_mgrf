@@ -88,7 +88,8 @@ def Gcap_full(n_profile,n_bulk,valency, s, domain,epsilon):
     omega_sqr = dist.Field(bases = zbasis)
     omega_sqr['g'] = s * s + calculate.kappa_sqr_profile(n_profile, valency, epsilon)
     omega_b = np.sqrt(s * s + calculate.kappa_sqr(n_bulk, valency, epsilon))
-
+    omega_min = min(omega_b,np.min(np.sqrt(omega_sqr['g']))) 
+    
     # Fields for G(P or log(U))
     P = dist.Field(name = 'P', bases = zbasis)
     tau_1 = dist.Field(name = 'tau_1')
@@ -103,8 +104,7 @@ def Gcap_full(n_profile,n_bulk,valency, s, domain,epsilon):
     problem.add_equation("dz(P)(z=0) = s")
 
     # Initial guess for P
-    #P['g'] = min(omega_b,np.min(np.sqrt(omega_sqr['g']))) * np.squeeze(z)
-    P['g'] = s * np.squeeze(z)
+    P['g'] = omega_min * np.squeeze(z)
 
     # Solver
     solver1 = problem.build_solver(ncc_cutoff = ncc_cutoff_greens)
@@ -144,8 +144,8 @@ def Gcap_full(n_profile,n_bulk,valency, s, domain,epsilon):
     problem1.add_equation("dz(Q)(z=Lz) = -omega_b")
 
     # Initial guess for Q
-    #Q['g'] = -min(omega_b,np.min(np.sqrt(omega_sqr['g'])))* (np.squeeze(z) - Lz)
-    Q['g'] = -s* (np.squeeze(z) - Lz)
+    Q['g'] = -omega_min* (np.squeeze(z) - Lz)
+
     # Solver
     solver2 = problem1.build_solver(ncc_cutoff = ncc_cutoff_greens)
     pert_norm2 = np.inf
@@ -157,7 +157,7 @@ def Gcap_full(n_profile,n_bulk,valency, s, domain,epsilon):
         solver2.newton_iteration()
         pert_norm2 = sum(pert2.allreduce_data_norm('c', 2) for pert2 in solver2.perturbations)
     #     print('q =' + str(q))
-    #
+   
     # print('Q done for ' + str(s))
     Qz = d3.Gradient(Q).evaluate()
     Qz.change_scales(1)
