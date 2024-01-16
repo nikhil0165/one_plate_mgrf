@@ -1,0 +1,7 @@
+results*
+*.out
+*.py~
+*_test.py*
+__pycache__
+*.sh*
+#*
