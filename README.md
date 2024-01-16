@@ -1,6 +1,13 @@
 # one_plate_mgrf
 
-This is a python package for solving the modified Gaussian renormalized fluctuation theory to get the electrical double layer structure next to a single uniformly charged plate. The code is based on the equations derived in the work of Agrawal and Wang, [Phys. Rev. Lett. 2022, 129, 228001](https://doi.org/10.1103/PhysRevLett.129.228001) and [J. Chem. Theory Comput. 2022, 18, 6271–6280](https://doi.org/10.1021/acs.jctc.2c00607) and is written on top of open-source spectral methods based differential equation solver Dedalus, developed by [Burns et al., Phys. Rev. Res. 2020, 2 (2), 023068](https://doi.org/10.1103/PhysRevResearch.2.023068). The iteration scheme for solving the non-linear equations in this code are partially adopted from the work of Xu and Maggs[J. Comp. Phys. 275 (2014): 310-322.](https://doi.org/10.1016/j.jcp.2014.07.004), the complete scheme and the method to solve the correlation functions will be soon published as a research article. The code solves for gaussian correlation functions for symmteric double layers in highly parallel manner. Although,the equations derived in the work of Agrawal and Wang account for spatially varying dielectric permittivities, the code is in its current version is for systems with uniform dielectric permittivity. In the text that follows, the contents of various python files are described.
+This is a python package for solving the modified Gaussian renormalized fluctuation theory to get the electrical double layer structure next to a single uniformly charged plate. The code is based on the equations derived in the work of Agrawal and Wang, [Phys. Rev. Lett. 2022, 129, 228001](https://doi.org/10.1103/PhysRevLett.129.228001) and [J. Chem. Theory Comput. 2022, 18, 6271–6280](https://doi.org/10.1021/acs.jctc.2c00607) and is written on top of open-source spectral methods based differential equation solver Dedalus, developed by [Burns et al., Phys. Rev. Res. 2020, 2 (2), 023068](https://doi.org/10.1103/PhysRevResearch.2.023068). The iteration scheme for solving the non-linear equations in this code are partially adopted from the work of Xu and Maggs[J. Comp. Phys. 275 (2014): 310-322.](https://doi.org/10.1016/j.jcp.2014.07.004), the complete scheme and the method to solve the correlation functions will be soon published as a research article. The code solves for gaussian correlation functions for symmteric double layers in highly parallel manner. Although,the equations derived in the work of Agrawal and Wang account for spatially varying dielectric permittivities, the code is in its current version is for systems with uniform dielectric permittivity. 
+
+This code can be used to reproduce the data presented in:
+
+1. Nikhil R. Agrawal, Chao Duan, and Rui Wang [J. Phys. Chem. B 2024, 128, 1, 303–311](https://doi.org/10.1021/acs.jpcb.3c04739)
+2. Nikhil R. Agrawal and Rui Wang [AIChE Journal 2023, 69 (12), e18269](https://doi.org/10.1002/aic.18269)
+
+In the text that follows, the contents of various python files are described.
 
 ## numerical_param.py
 
@@ -16,7 +23,7 @@ solves the linearized mean-field Poisson-Boltzmann or debye-hueckel theory for e
 
 ## pb_1plate.py
 
-Solves the full mean-field Poisson-Boltzmann theory for electrical double layers next to a single charged plate. This is a non-linear boundary value problem whose initial guess can come from dh_1playte.py or another solution for mean-field PB. The solution of this can be used as an initial guess to solve for the modified Gaussian renormalized fluctuation theory in mgrf_1plate.py. 
+Solves the full mean-field Poisson-Boltzmann theory for electrical double layers next to a single charged plate. This is a non-linear boundary value problem whose initial guess can come from dh_1plate.py or another solution for mean-field PB. The solution of this can be used as an initial guess to solve for the modified Gaussian renormalized fluctuation theory in mgrf_1plate.py. 
 
 ## mgrf_1plate.py
 
