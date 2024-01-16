@@ -1,55 +1,72 @@
-## one_plate_mgrf
+# one_plate_mgrf
 
-Python code for solving the modified Gaussian renormalized fluctuation theory to get the electrical double layer structure next to a single uniformly charged plate. This code is based on the equations derived in the work of Agrawal and Wang, Phys. Rev. Lett. 2022, 129, 228001. and J. Chem. Theory Comput. 2022, 18, 6271–6280 and is written on top of open-source spectral methods based differential equation solver \textit{Dedalus}, developed by Burns et al., Phys. Rev. Res. 2020, 2 (2), 023068. The iteration scheme for solving the non-linear equations in this code are soon to be published as a research article. This code solves for a symmteric double layer next to a planar charged surface in contact with an electrolyte solution. Although,the equations derived in the work of Agrawal and Wang account for spatially varying dielectric permittivities, the code is in its current version is for systems with uniform dielectric permittivity. In the text that follows, we have described contents in different files in the package.
+This is a python package for solving the modified Gaussian renormalized fluctuation theory to get the electrical double layer structure next to a single uniformly charged plate. The code is based on the equations derived in the work of Agrawal and Wang, [Phys. Rev. Lett. 2022, 129, 228001](https://doi.org/10.1103/PhysRevLett.129.228001) and [J. Chem. Theory Comput. 2022, 18, 6271–6280](https://doi.org/10.1021/acs.jctc.2c00607) and is written on top of open-source spectral methods based differential equation solver Dedalus, developed by [Burns et al., Phys. Rev. Res. 2020, 2 (2), 023068](https://doi.org/10.1103/PhysRevResearch.2.023068). The iteration scheme for solving the non-linear equations in this code are partially adopted from the work of Xu and Maggs[J. Comp. Phys. 275 (2014): 310-322.](https://doi.org/10.1016/j.jcp.2014.07.004), the complete scheme and the method to solve the correlation functions will be soon published as a research article. The code solves for gaussian correlation functions for symmteric double layers in highly parallel manner. Although,the equations derived in the work of Agrawal and Wang account for spatially varying dielectric permittivities, the code is in its current version is for systems with uniform dielectric permittivity. In the text that follows, the contents of various python files are described.
 
-# global_constants.py
-This file contains three types of variables/parameters which are rarely changed during the course of a research project. The first category is of physical constants which includes variables like temperature, boltzmann constant etc. This is also where you can specify dielectric constants on two side of the charged surface. The next category is of characteristic non-dimensional variables I have used to rescale the various physical quantities in the code to make them more numerically manageable/tractable. The last category is of the numerical parameters like number of grid points or various mixing ratios for iterative procedure. You will have to play around a little bit with these parameters. Explaination of some of the parameters associated with evaluation of greens function are given in https://doi.org/10.1016/j.jcp.2014.07.004.
+## numerical_param.py
 
-variables.py
-This file contains parameters which are often changed like bulk concentration, valency or size of the ions. This is also where you specify the surface charge. You can also specify the surface charge of the initial guess solution you want to use in (sigma_in_d). In the second part of this file various variable are placed in an array so they can be easily used. Finally the arrays are non dimensionalized using characteristic variables defined in global_constants.py.
+This is an input file to specify numerical parameters like number of grid points, tolerance criteria, mixing ratios for non-linear solvers, ncc cutoffs for dedalus etc. Note that equations being solved here are highly non-linear and hence some amount of tuning of these numerical parameters is required for efficient calculations.
 
-calculate.py
-This file contains very tiny functions to evaluate things like screening length. This will be a good place to write the formula for 'w' potential for exlculded volume effects.
+## physical_param.py 
 
-selfe.py
-perhaps the most important file in the package. This file calculate the self energy for the boltzmann factor. The details of self energy calculation can be found in the paper arXiv:2206.02030. Note that although there is an analytical solution for self-energy in the bulk we calculate it numerically so as to cancel out the numerical errors between self energy in interface and in the bulk. There are also functions in this file which calculate grand potential of the double layer This self energy file uses a bunch of other files like greens_function_int.py and greens_function_bulk.py which are described below.
+This is an input file to specify physical environment variables like salt concentrations, ion valencies, born radii of ion, excluded volumes of ions and solvent, domain size, dielectric permittivity, temperature etc. In the second part of this file are derived non dimensional variables from these input parameters, all the calculations are done in these non-dimensional variables. 
 
-greens_function_int.py and greens_function_bulk.py
-files to calculate free space greens function and full greens function in the interface and in the bulk. Although there is an analytical solution for free space greens function we calculate it numerically so as to cancel out the numerical errors.
+## dh_1plate.py
 
-pb_xumaggs.py
-calculates the solution to modified poisson boltzmann equation iteratively using the two step iterative procedure given in https://doi.org/10.1016/j.jcp.2014.07.004. The output of this file/function is the solution you are looking for.
+solves the linearized mean-field Poisson-Boltzmann or debye-hueckel theory for electrical double layers. The solution of this is usually used as initial guess to solve for full mean-field PB in pb_1plate.py.
 
-A small but important point to note is that inside this file there is a variable named nodes_exc, please make sure that your choice of variables 'factor' and 'nodes/grid_size' is such that nodes_exc turns out to be an exact integer.
+## pb_1plate.py
 
-domain variable decides the length of the domain the code will solve for. domain*diameter is the length of system.
+Solves the full mean-field Poisson-Boltzmann theory for electrical double layers next to a single charged plate. This is a non-linear boundary value problem whose initial guess can come from dh_1playte.py or another solution for mean-field PB. The solution of this can be used as an initial guess to solve for the modified Gaussian renormalized fluctuation theory in mgrf_1plate.py. 
 
-num_concn.py
-Has two important functions. nconc_xumaggs calculates the coefficient in front of the exp(-z\psi) in the modified poisson boltzmann. It also outputs the coefficients which are needed to calculate the Jacobian for the newton-raphson iterative scheme. nconc_complete is used at the end of pb_xumaggs file to calculate the concentration profile associated with converged potential profile we get out of modified poisson boltzmann.
+## mgrf_1plate.py
 
-dh_linear.py
-solves the linearized mean-field Poisson-Boltzmann (DH theory for common folk) to be used as initial guess to solve for full mean-field PB in pb_nonlinear.py
+calculates the solution to modified Gaussian renormalized fluctuation theory for 1 plate system. This is also a non-linear boundary value problem whose initial guess can come from pb_1plate.py or solution for mgrf with another set of parameters. This function requires various properties like screening lengths, concentration profiles, self-energies, etc. Functions for these properties are described below.
 
-pb_nonlinear.py
-solves the full mean-field Poisson-Boltzmann to be used as initial guess to solve for pb_xumaggs.py.
+## num_concn.py
+Has threet functions. nconc_mgrf calculates the coefficient in front of the exp(-z\psi) in the mgrf_1plate.py. It also outputs the coefficients which are needed to calculate the Jacobian for the newton-raphson iterative scheme. nconc_complete is the function to calculate concentration profile for given psi profile with n_initial as the initial guess. nconc_pb calculates numer density profiles for mean-field PB. 
 
-simulator_pb.py
-This code runs pb_xumagss for the variables given in variables.py to solve for the gaussian renormalized fluctuation theory using pb_xumaggs.py. This file uses the solution of pb_nonlinear.py as the initial guess to solve for pb_xumaggs.py. The input variables for pb_nonlinear.py are same as input variables for pb_xumaggs but one can play with them using variables.py.
+## selfe_1plate.py
 
-simulator.py
-This code also runs pb_xumaggs for the variables given in variables.py to solve for the gaussian renormalized fluctuation theory using pb_xumaggs.py. This file uses the solution of a saved solution of pb_xumaggs as the initial guess to solve for pb_xumaggs.py. The variables deciding which saved solution to choose as initial guess are written in variables.py (ex: sigma_in_d).
+This file includes functions to calculate the self-energy profiles for a double layer for a 1 plate system based on the equations given in supplemental material of Agrawal and Wang, Phys. Rev. Lett. 2022, 129, 228001. The functions in this file use another file called greens_function_1plate.py which evaluates the fourier transform of the green's functions in the interface.
 
-greens_test.py and selfe_test.py
-simple files which you can use to check the validity of code. they compare analytical solutions to numerical solutions.
+## selfe_bulk.py
 
-How to include new excluded volume approach
-You will have to replace the functions eta_local and eta_complete with your functions for 'w'. These two functions are called inside:
+This file includes functions to calculate the self-energy for the bulk solution based on the equations given in supplemental material of Agrawal and Wang, Phys. Rev. Lett. 2022, 129, 228001. Note that although there is an analytical solution for self-energy in the bulk we calculate it numerically so as to cancel out the numerical errors between self energy in interface and in the bulk. The functions in this file use another file called greens_function_bulk.py which evaluates the fourier transform of the green's functions in the bulk.
 
-nconc_complete in num_conc.py
-pb_xumaggs.py
-simulator.py
-Make sure you replace eta everywhere.
+## greens_function_1plate.py and greens_function_bulk.py
 
-About
-Gaussian renormalized fluctuation theory for double layers next to a planar charged surface
+File to calculate fourier transforms of G and Go in the interface and bulk respectively.
+
+## calculate.py
+
+This file contains functions to evaluate properties like screening length, ionic strength, incompressibility fields and charge density profiles. There is also a function called interpolator to interpolate electrostatic potential and ion density profiles in order to increase or decrease grid points. A function to calculate the residual of gauss law is also given.
+
+## energy_1plate.py
+
+Functions to calculate grand free energy of the interface and bulk for both mean-field PB as well as modified Gaussian renormalized fluctuation theory.
+
+## simulator_pb.py
+
+This code saves the solution of the modified Gaussian renormalized fluctuation theory in a .h5 file for the input parameters given in the two *_param.py files. This file uses the solution of pb_1plate.py as the initial guess to solve for mgrf_1plate.py. The input variables for pb_1plate.py and mgrf_2plate can be set separately using the file physical_param.py.
+
+## simulator.py
+
+This code saves the solution of the modified Gaussian renormalized fluctuation theory in a .h5 file for the input parameters given in the two *_param.py files. This file uses a saved solution of mgrf_1plate.py as the initial guess. The physical variables for this saved solution and the final paramters for which we want the double layer structuure can be set separately using the file physical_param.py. The variables deciding which saved solution to choose as initial guess end with "_in_d", for ex: sigma_in_d.
+
+## packages.py
+
+This python file contains the import statements for all the python libraries that are needed for this package. We suggest that you create a separate conda environment where all these libraries are installed.
+
+## Running the code
+
+The code can be run using any of the following commands based on your need: 
+
+python simulator.py physical_param.py
+
+python simulator_pb.py physical_param.py
+
+Note that numerical_param.py has been directly imported in simulator files as the numerical parameters are seldom changed. However one can easily parse them through the command line by changing the first section of simulator files.
+
+## Contact:
+This code was developed by Nikhil Agrawal in the lab of Prof. Rui Wang, Pitzer Center for Theoretical Chemistry, University of California, Berkeley, USA. If you need any help feel free to write to Nikhil at nikhilagrawal0165@gmail.com.  
 
