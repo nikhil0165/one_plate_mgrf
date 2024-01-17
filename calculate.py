@@ -46,28 +46,27 @@ def interpolator(psi_complete,nconc_complete,bounds,new_grid): # function to cha
     coords = d3.CartesianCoordinates('z')
     dist = d3.Distributor(coords,dtype = np.float64)  # No mesh for serial / automatic parallelization
     zbasis = d3.Chebyshev(coords['z'],size = grid_points,bounds = bounds)
-    # Fields
 
-    n_ions = np.len(nconc_complete[0,:])
+    # Fields
+    n_ions = len(nconc_complete[0,:])
     nconc = np.zeros((new_grid,n_ions))
     psi = dist.Field(name = 'psi',bases = zbasis)
     psi['g'] = psi_complete
     psi.change_scales(new_grid/grid_points)
 
-    if n_ions==2:
-        nconc0['g'] = nconc_complete[:,0]
-        nconc1['g'] = nconc_complete[:,1]
-        nconc0 = dist.Field(name = 'nconc0',bases = zbasis)
-        nconc1 = dist.Field(name = 'nconc1',bases = zbasis)
-        nconc0.change_scales(new_grid/grid_points)
-        nconc1.change_scales(new_grid/grid_points)
-        nconc[:,0] = nconc0['g']
-        nconc[:,1] = nconc1['g']
+    nconc0 = dist.Field(name = 'nconc0',bases = zbasis)
+    nconc1 = dist.Field(name = 'nconc1',bases = zbasis)
+    nconc0['g'] = nconc_complete[:,0]
+    nconc1['g'] = nconc_complete[:,1]
+    nconc0.change_scales(new_grid/grid_points)
+    nconc1.change_scales(new_grid/grid_points)
+    nconc[:,0] = nconc0['g']
+    nconc[:,1] = nconc1['g']
     if n_ions==4:
-        nconc2['g'] = nconc_complete[:,2]
-        nconc3['g'] = nconc_complete[:,3]
         nconc2 = dist.Field(name = 'nconc2',bases = zbasis)
         nconc3 = dist.Field(name = 'nconc3',bases = zbasis)
+        nconc2['g'] = nconc_complete[:,2]
+        nconc3['g'] = nconc_complete[:,3]
         nconc2.change_scales(new_grid/grid_points)
         nconc3.change_scales(new_grid/grid_points)
         nconc[:,2] = nconc2['g']
