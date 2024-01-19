@@ -6,10 +6,10 @@ cb1_d = 0.5* pow(10, 3)# prinamry salt bulk concentration
 cb2_d = 0*pow(10,3)# secondary salt bulk concentration
 valency1 = [3,-1] # valency of primary salt
 valency2 = [1,-1] # valency of secondary salt
-born_radius = 3.0* pow(10, -10)
+born_radius = 2.1* pow(10, -10)
 rad_sol_d = born_radius
-domain_d= 60.0 #  this times debye huckel length
-domain_in_d = 60.0 # domain length of the initial guess also in debye huckel length units 
+domain_d= 100.0 #  this times debye huckel length
+domain_in_d = 70.0 # domain length of the initial guess also in debye huckel length units 
 sigma_d = -0.15 # surface charge density
 sigma_in_d = -0.15# initial point for starting calculation in case of high surface charge densities
 

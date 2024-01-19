@@ -17,7 +17,7 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
     eta_profile=calculate.eta_profile(nconc_guess,vol_ions,vol_sol)
     uself_profile = selfe_1plate.uself_complete(nconc_guess,n_bulk,rad_ions,valency,domain,epsilon)
     uself = np.copy(uself_profile)
-    print('selfe_done')
+    print('selfe_done before the loop')
 
     # Bulk properties
     n_bulk_numerical = np.multiply(np.ones((grid_points,len(valency))),n_bulk)
@@ -97,9 +97,10 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
 
         psi.change_scales(1)
         psi_g = psi['g']
-
+        #print('PB done')
         n_profile,coeff_useless = num_concn.nconc_mgrf(psi_g, uself, eta_profile, uself_bulk, n_bulk, valency, vol_ions, eta_bulk,equal_vols)
         uself_profile = selfe_1plate.uself_complete(n_profile, n_bulk,rad_ions, valency, domain,epsilon)
+        #print('selfe_done in the loop')
         convergence_tot = np.true_divide(np.linalg.norm(uself_profile - uself),np.linalg.norm(uself))
 
         # mixing old self-energy and new self-energy
