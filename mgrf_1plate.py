@@ -29,6 +29,7 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
     equal_vols = np.all(vol_diff < vol_sol * 1e-5)
 
     n_profile, coeffs = num_concn.nconc_mgrf(psi_g, uself_profile, eta_profile, uself_bulk, n_bulk, valency, vol_ions, eta_bulk, equal_vols)
+    coeffs = coeffs/epsilon
 
     Z = None
 

@@ -1,4 +1,3 @@
-import numpy as np
 from packages import *
 import calculate
 from numerical_param import *
@@ -53,7 +52,6 @@ def Gcap_free(grid_points,s,domain,epsilon): # function for \hat{Go}
     gc.collect()
 
     return G
-
 
 def Gcap_full(n_profile,n_bulk,valency,s,domain,epsilon): # function for \hat{G}
 

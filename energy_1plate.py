@@ -10,12 +10,8 @@ def grandfe_mgrf_1plate(psi, n_profile, uself_profile,n_bulk, valency,rad_ions, 
     nodes = len(n_profile)-1
     n_bulk_profile = np.multiply(np.ones((nodes, len(valency))), n_bulk)
     grandfe_bulk = grandfe_mgrf_bulk(n_bulk_profile,n_bulk, valency,rad_ions, vol_ions,vol_sol, domain, epsilon)
-    vol_local = np.zeros(nodes)
-    psi_local = np.zeros(nodes)
-    n_local = np.zeros((nodes, len(valency)))
-    u_local = np.zeros((nodes, len(valency)))
+
     utau = np.zeros((nodes+1, len(valency)))
-    utau_local = np.zeros((nodes, len(valency)))
     taus, weights = np.polynomial.legendre.leggauss(grandfe_quads)
 
     coords = d3.CartesianCoordinates('z')
@@ -79,8 +75,6 @@ def grandfe_pb_1plate(psi, n_profile,n_bulk, valency, sigma, domain):
     nodes = len(n_profile)-1
     n_bulk_profile = np.multiply(np.ones((nodes, len(valency))), n_bulk)
     grandfe_bulk = grandfe_pb_bulk(n_bulk_profile,n_bulk, valency, domain)
-    psi_local = np.zeros(nodes)
-    n_local = np.zeros((nodes, len(valency)))
 
     coords = d3.CartesianCoordinates('z')
     dist = d3.Distributor(coords, dtype = np.float64)  # No mesh for serial / automatic parallelization
@@ -95,7 +89,6 @@ def grandfe_pb_1plate(psi, n_profile,n_bulk, valency, sigma, domain):
     grandfe = grandfe - np.sum(n_local*dz[:,np.newaxis])
 
     return grandfe - grandfe_bulk
-
 
 # free energy from pb theory for bulk solution
 def grandfe_pb_bulk(n_bulk_profile,n_bulk, valency, domain):
