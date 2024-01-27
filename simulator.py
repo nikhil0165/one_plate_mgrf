@@ -38,9 +38,9 @@ with h5py.File(output_dir + '/mgrf_' + file_name + '.h5', 'r') as file:
     nconc_complete = np.array(file['nconc'])
 
 
-psi_complete, nconc_complete = calculate.interpolator(psi_complete,nconc_complete,(0,domain),N_grid)                                                                                                              
-print(len(psi_complete))                                                                                                                                                                                 
-print(len(nconc_complete))       
+# psi_complete, nconc_complete = calculate.interpolator(psi_complete,nconc_complete,(0,domain),N_grid)                                                                                                              
+# print(len(psi_complete))                                                                                                                                                                                 
+# print(len(nconc_complete))       
     
 psi_complete,nconc_complete,uself_complete, q_complete, z, res= mgrf_1plate.mgrf_1plate(psi_complete,nconc_complete,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s)
 grandfe =0# energy_1plate.grandfe_mgrf_1plate(psi_complete,nconc_complete,uself_complete,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s)

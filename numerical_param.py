@@ -2,9 +2,9 @@ from packages import *
 
 ## Numerical Parameters
 
-s_conv = 1e4  # approx for infinity for fourier inverse of greens function
+s_conv = 1e6  # approx for infinity for fourier inverse of greens function
 V_conv = log(s_conv + 1)  # we do fourier inverse integration in the logspace
-quads = 20  # no of legendre gauss quadrature points for fourier inverse of greens function
+quads = 24  # no of legendre gauss quadrature points for fourier inverse of greens function
 N_grid = 512 # has to be even, since we often use 3/2 for dealiasing
 dealias = 3/2  # dealiasing factor for dedalus
 ncc_cutoff_mgrf = 1e-2  # some cutoff parameter for non-constant coefficients on LHS of NLBVP of MGRF
@@ -15,7 +15,7 @@ selfe_ratio = 0.1 # mixing ratio of self-energy (new to old) in outermost loop o
 eta_ratio = 0.1  # mixing ratio of eta (new to old) in outermost loop of pb_mgrf
 grandfe_quads = 20  # no of legendre gauss quadrature points for free energy calculation
 cores = 20  # no of parallel processes in which you want to divide fourier inverse calculation
-tolerance = 1.0*pow(10,-4)  # tolerance for outermost loop for pb_mgrf
+tolerance = 4.0*pow(10,-4)  # tolerance for outermost loop for pb_mgrf
 tolerance_pb = pow(10,-9)  # tolerance for inner loop mgrf/outermost loop pb_
 tolerance_num = pow(10,-4)  # tolerance for nconc_mgrf iteration loop
 tolerance_greens = pow(10,-5)  # tolerance for nonlinear problem for greens function

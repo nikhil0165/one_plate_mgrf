@@ -6,7 +6,7 @@ import selfe_bulk
 from numerical_param import*
 
 def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma, domain, epsilon):  # psi_guess from mean-field PB acts as a initial guess
-    
+    print('tolerance=' + str(tolerance))
     print('selfe_ratio= ' + str(selfe_ratio))
     grid_points = len(psi_guess)
     bounds = (0,domain)
@@ -125,7 +125,7 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
     
     q_profile = calculate.charge_density(n_profile, valency)
     res= calculate.res_1plate(psi_g,q_profile,bounds,sigma,epsilon)
-    print("Gauss's law residual for MGRF is is = " + str(res))
+    print("Gauss's law residual for MGRF is = " + str(res))
 
     return psi_g, n_profile,uself_profile,q_profile,Z, res
 

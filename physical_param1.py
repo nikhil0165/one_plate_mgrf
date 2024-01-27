@@ -9,10 +9,10 @@ valency2 = [1,-1]
 born_radius = 1.0* pow(10, -10)
 rad_sol_d = born_radius
 vol_sol_d = 4/3*pi*pow(rad_sol_d,3)
-domain_d= 20.0 #  this times debye huckel length
-domain_in_d = 20.0
-sigma_d = -0.15# surface charge density
-sigma_in_d = -0.15#*ec/(pow(10,-18)) # initial point for starting calculation in case of high surface charge densities
+domain_d= 50.0 #  this times debye huckel length
+domain_in_d = 50.0
+sigma_d = -0.01# surface charge density
+sigma_in_d = -0.01#*ec/(pow(10,-18)) # initial point for starting calculation in case of high surface charge densities
 
 print(f'sigma_d = {sigma_d}')
 print(f'domain_d = {domain_d}')
