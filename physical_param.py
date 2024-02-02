@@ -13,11 +13,6 @@ domain_in_d = 100.0 # domain length of the initial guess also in debye huckel le
 sigma_d = -0.15 # surface charge density
 sigma_in_d = -0.15# initial point for starting calculation in case of high surface charge densities
 
-print(f'sigma_d = {sigma_d}')
-print(f'domain_d = {domain_d}')
-print(f'sigma_in_d = {sigma_in_d}')
-print(f'domain_in_d = {domain_in_d}')
-
 vol_sol_d = 4/3*pi*pow(rad_sol_d,3)
 
 
@@ -29,6 +24,16 @@ else:
     valency = np.hstack((valency1,valency2))
     rad_ions_d = np.array([born_radius, born_radius,born_radius,born_radius])# rad of ions
     vol_ions_d = np.array([vol_sol_d,vol_sol_d,vol_sol_d,vol_sol_d])
+
+
+print(f'cb1_d = {cb1_d/pow(10,3)}')
+print(f'cb2_d = {cb2_d/pow(10,3)}')
+print(f'sigma_in_d = {sigma_in_d}')
+print(f'sigma_d = {sigma_d}')
+print(f'domain_in_d = {domain_in_d}')
+print(f'domain_d = {domain_d}')
+print(f'valency = {valency}')
+
 
 ## Physical constants
 
