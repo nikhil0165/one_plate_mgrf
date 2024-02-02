@@ -2,37 +2,40 @@ from packages import *
 
 ## Global Input Variables, All quantities are in SI unit _d means dimensional
 
-cb1_d = 0.5* pow(10, 3)# prinamry salt bulk concentration
-cb2_d = 0*pow(10,3)# secondary salt bulk concentration
+cb1_d = 0.5# prinamry salt bulk concentration
+cb2_d = 0.0# secondary salt bulk concentration
 valency1 = [3,-1] # valency of primary salt
 valency2 = [1,-1] # valency of secondary salt
-born_radius = 2.0* pow(10, -10)
-rad_sol_d = born_radius
+born_radius1 = 2.5# radius of cation in Angstroms
+born_radius2 = 1.5 # radius of anion in Angstroms
+rad_sol_d = max(born_radius1,born_radius2)
+
 domain_d= 100.0 #  this times debye huckel length
 domain_in_d = 100.0 # domain length of the initial guess also in debye huckel length units 
 sigma_d = -0.15 # surface charge density
 sigma_in_d = -0.15# initial point for starting calculation in case of high surface charge densities
 
-vol_sol_d = 4/3*pi*pow(rad_sol_d,3)
-
+vol_sol_d = 4/3*pi*pow(rad_sol_d*pow(10, -10),3)# volume of solvent molecule assuming its a sphere
 
 if cb2_d == 0:
     valency = np.array(valency1)
-    rad_ions_d = np.array([born_radius, born_radius])
+    rad_ions_d = np.array([born_radius1, born_radius2])
     vol_ions_d = np.array([vol_sol_d,vol_sol_d])
 else:
     valency = np.hstack((valency1,valency2))
-    rad_ions_d = np.array([born_radius, born_radius,born_radius,born_radius])# rad of ions
+    rad_ions_d = np.array([born_radius1, born_radius2,born_radius2,born_radius2])# rad of ions
     vol_ions_d = np.array([vol_sol_d,vol_sol_d,vol_sol_d,vol_sol_d])
 
 
-print(f'cb1_d = {cb1_d/pow(10,3)}')
-print(f'cb2_d = {cb2_d/pow(10,3)}')
+print(f'cb1_d = {cb1_d}')
+print(f'cb2_d = {cb2_d}')
 print(f'sigma_in_d = {sigma_in_d}')
 print(f'sigma_d = {sigma_d}')
 print(f'domain_in_d = {domain_in_d}')
 print(f'domain_d = {domain_d}')
 print(f'valency = {valency}')
+print(f'rad_ions_d = {rad_ions_d}')
+print(f'rad_sol_d = {rad_sol_d}')
 
 
 ## Physical constants
@@ -64,20 +67,17 @@ conc_c = 1/vol_c # characteristic concentration
 
 # bulk concentration of primary salt ions
 cbulk_plus_d, cbulk_neg_d = (cb1_d, cb1_d) if abs(valency[0]) == abs(valency[1]) else (cb1_d * abs(valency[1]), cb1_d * abs(valency[0]))
-
-nbulk_plus_d, nbulk_neg_d = cbulk_plus_d*N_A, cbulk_neg_d*N_A # number of concentration of ions
-
+nbulk_plus_d, nbulk_neg_d = cbulk_plus_d*N_A* pow(10, 3), cbulk_neg_d*N_A* pow(10, 3) # number of concentration of ions
 n_bulk_d =  [nbulk_plus_d,nbulk_neg_d]
 
 # bulk concentration of secondary salt ions
 if cb2_d != 0:
     cb2_plus_d, cb2_neg_d = (cb2_d, cb2_d) if abs(valency[2]) == abs(valency[3]) else (cb2_d * abs(valency[3]), cb2_d * abs(valency[2]))
-    nb2_plus_d, nb2_neg_d = cb2_plus_d * N_A, cb2_neg_d * N_A  # number of concentration of ions
+    nb2_plus_d, nb2_neg_d = cb2_plus_d * N_A* pow(10, 3), cb2_neg_d * N_A* pow(10, 3)  # number of concentration of ions
     n_bulk_d = [nbulk_plus_d,nbulk_neg_d,nb2_plus_d,nb2_neg_d]
 
 I = sum([(valency[i] ** 2) * n_bulk_d[i] / len(valency) for i in range(len(valency))])
 lambda_d_d = np.sqrt(epsilon_s_d / (beta * pow(ec, 2) * I)) # Debye Screening length
-
 
 print('domain in Ang = ' +str(domain_d*lambda_d_d/pow(10,-10)))
 
@@ -87,14 +87,16 @@ epsilon_s = epsilon_s_d / epsilon_c
 n_bulk = np.true_divide(n_bulk_d,nconc_c)
 sigma_i = sigma_in_d/sigma_c
 sigma = sigma_d/sigma_c
-rad_ions = np.true_divide(rad_ions_d,l_c)
-rad_sol  = rad_sol_d/l_c
+rad_ions = np.true_divide(rad_ions_d*pow(10, -10),l_c)
+rad_sol  = rad_sol_d*pow(10, -10)/l_c
 cbulk_plus = cbulk_plus_d/conc_c
 cbulk_neg = cbulk_plus_d/conc_c
 vol_sol = vol_sol_d/vol_c
 vol_ions = np.true_divide(vol_ions_d,vol_c)
 domain  = domain_d*lambda_d_d/l_c
-lambda_d = lambda_d_d/l_c 
+domain_in  = domain_in_d*lambda_d_d/l_c
+lambda_d = lambda_d_d/l_c
+
 
 
 

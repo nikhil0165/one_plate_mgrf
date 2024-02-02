@@ -2,6 +2,7 @@ from numerical_param import *
 import dh_1plate
 import pb_1plate
 import mgrf_1plate
+from physical_param import *
 import energy_1plate
 
 start = timeit.default_timer()
@@ -19,7 +20,6 @@ module_name = os.path.splitext(os.path.basename(args.input_files[0]))[0]
 input_physical = importlib.import_module(module_name)
 variables = {name: value for name, value in input_physical.__dict__.items() if not name.startswith('__')}
 (locals().update(variables))
-
 
 
 # The EDL structure calculations start here
@@ -42,19 +42,19 @@ stop = timeit.default_timer()
 print('Time: ', stop - start)
 
 if cb2_d != 0:
-    output_dir = os.getcwd() + '/results-mixture' + str(abs(valency[0]))+ '_' + str(abs(valency[1])) + '_' + str(abs(valency[2]))+ '_' + str(abs(valency[3]))
-    file_name =  str(round(cb1_d / pow(10, 3), 9)) + '_' + str(round(cb2_d / pow(10, 3), 5)) + '_' + str(round(float(domain_d), 2))+ '_' + str(round(rad_ions_d[0] / pow(10, -10), 2)) + '_' + str(round(rad_ions_d[1] / pow(10, -10), 2)) + '_' + str(round(sigma_d, 5))
+    file_dir = os.getcwd() + '/results-mixture' + str(abs(valency[0]))+ '_' + str(abs(valency[1])) + '_' + str(abs(valency[2]))+ '_' + str(abs(valency[3]))
+    file_name =  str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_d), 2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(rad_ions_d[2],2)) + '_' + str(round(rad_ions_d[3],2)) + '_' + str(round(sigma_d, 5))
 else:
-    output_dir = os.getcwd() + '/results' + str(abs(valency[0])) + '_' + str(abs(valency[1]))
-    file_name = str(round(cb1_d / pow(10, 3), 9)) + '_' + str(round(cb2_d / pow(10, 3), 5))  + '_' + str(round(float(domain_d), 2)) + '_' + str(round(rad_ions_d[0] / pow(10, -10), 2)) + '_' + str(round(rad_ions_d[1] / pow(10, -10), 2)) + '_' + str(round(sigma_d, 5))
+    file_dir = os.getcwd() + '/results' + str(abs(valency[0])) + '_' + str(abs(valency[1]))
+    file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5))  + '_' + str(round(float(domain_d), 2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_d, 5))
 
 ### Create the output directory if it doesn't exist
 
-if not os.path.exists(output_dir):
-    os.mkdir(output_dir)
+if not os.path.exists(file_dir):
+    os.mkdir(file_dir)
 
 # Writing everything in SI units
-with h5py.File(output_dir + '/mgrf_' + file_name + '.h5', 'w') as file:
+with h5py.File(file_dir + '/mgrf_' + file_name + '.h5', 'w') as file:
 
     # Storing scalar variables as attributes of the root group
     file.attrs['ec_charge'] = ec
@@ -62,8 +62,8 @@ with h5py.File(output_dir + '/mgrf_' + file_name + '.h5', 'w') as file:
     file.attrs['beta'] = beta
     file.attrs['epsilon_s'] = epsilonr_s_d
     file.attrs['epsilon_p'] = epsilonr_s_d
-    file.attrs['cb1'] = cb1_d*0.001
-    file.attrs['cb2'] = cb2_d*0.001
+    file.attrs['cb1'] = cb1_d
+    file.attrs['cb2'] = cb2_d
     file.attrs['surface_charge'] = sigma_d
     file.attrs['domain'] = domain_d
 
@@ -95,6 +95,7 @@ with h5py.File(output_dir + '/mgrf_' + file_name + '.h5', 'w') as file:
     file.create_dataset('nconc_d', data = nconc_complete*nconc_c/N_A)
     file.create_dataset('uself_d', data = uself_complete*(1/beta))
     file.create_dataset('charge_d', data = q_complete*(nconc_c*ec))
+    file.create_dataset('n_bulk_d', data = n_bulk_d)
 
     # Store all spatial profiles (non-dimensional)
     file.create_dataset('z', data = z)
@@ -102,6 +103,7 @@ with h5py.File(output_dir + '/mgrf_' + file_name + '.h5', 'w') as file:
     file.create_dataset('nconc', data = nconc_complete)
     file.create_dataset('uself', data = uself_complete)
     file.create_dataset('charge',data = q_complete)
+    file.create_dataset('n_bulk', data =n_bulk)
 
     # Store free energy
     file.attrs['grandfe'] = grandfe # nondimensional

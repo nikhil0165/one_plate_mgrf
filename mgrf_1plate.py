@@ -6,8 +6,10 @@ import selfe_bulk
 from numerical_param import*
 
 def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma, domain, epsilon):  # psi_guess from mean-field PB acts as a initial guess
-    print('tolerance=' + str(tolerance))
-    print('selfe_ratio= ' + str(selfe_ratio))
+
+    print(f'tolerance={tolerance}')
+    print(f'selfe_ratio={selfe_ratio}')
+
     grid_points = len(psi_guess)
     bounds = (0,domain)
     Lz = bounds[1]
