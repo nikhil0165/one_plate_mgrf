@@ -30,7 +30,7 @@ def grandfe_mgrf_1plate(psi, n_profile, uself_profile,n_bulk, valency,rad_ions, 
     grandfe = grandfe + (1 / vol_sol) * np.sum(np.log(1 - vol_local) * dz)
 
     for k in range(0, len(taus)):
-            utau = utau + 0.5*weights[k]*selfe_1plate.uself_complete((0.5*taus[k]+0.5)*n_profile,n_bulk,rad_ions, valency,domain, epsilon)
+            utau = utau + 0.5*weights[k]*selfe_1plate.uself_complete((0.5*taus[k]+0.5)*n_profile,(0.5*taus[k]+0.5)*n_bulk,rad_ions, valency,domain, epsilon)
 
     utau_local = 0.5 * (utau[:-1] + utau[1:])
     grandfe = grandfe + np.sum(n_local * utau_local * dz[:, np.newaxis])
@@ -60,7 +60,7 @@ def grandfe_mgrf_bulk(n_bulk_profile,n_bulk, valency,rad_ions,vol_ions, vol_sol,
     grandfe = grandfe + np.sum(dz*(1/vol_sol)*np.log(1-vol_bulk))
 
     for k in range(0, len(taus)):
-            utau_bulk = utau_bulk + 0.5 * weights[k] * selfe_bulk.uselfb_numerical((0.5 * taus[k] + 0.5) * n_bulk_profile,sqrt(0.5*taus[k]+0.5)*n_bulk, rad_ions, valency,domain, epsilon)
+            utau_bulk = utau_bulk + 0.5 * weights[k] * selfe_bulk.uselfb_numerical((0.5 * taus[k] + 0.5) * n_bulk_profile,(0.5*taus[k]+0.5)*n_bulk, rad_ions, valency,domain, epsilon)
     
     grandfe = grandfe + np.sum(n_bulk * utau_bulk * dz[:,np.newaxis])
     grandfe = grandfe - np.sum(n_bulk * u_bulk * dz[:,np.newaxis])
