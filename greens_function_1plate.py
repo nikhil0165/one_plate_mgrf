@@ -138,7 +138,7 @@ def Gcap_full(n_profile,n_bulk,valency,s,domain,epsilon): # function for \hat{G}
     if np.any(np.isnan(Pz)):
         print("The Pz array contains at least one 'nan' for s= " + str(s))
 
-    if np.any(np.isnan(np.array(Qz,dtype = np.float64))):
+    if np.any(np.isnan(Qz)):
         print("The Qz array contains at least one 'nan' for s= " + str(s))
 
     del z,Pz,Qz,tau_1,dz,lift_basis,lift,problem,solver1,solver2,pert_norm2,pert_norm1

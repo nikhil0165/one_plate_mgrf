@@ -20,7 +20,10 @@ input_physical = importlib.import_module(module_name)
 variables = {name: value for name,value in input_physical.__dict__.items() if not name.startswith('__')}
 (locals().update(variables))
 
-
+print(f'ncc_cutoff_mgrf = {ncc_cutoff_mgrf}')
+print(f'ncc_cutoff_greens= {ncc_cutoff_greens}')
+print(f'selfe_ratio = {selfe_ratio}')
+print(f'tolerance = {tolerance}')
 
 if cb2_d != 0:
     file_dir = os.getcwd() + '/results-mixture' + str(abs(valency[0]))+ '_' + str(abs(valency[1])) + '_' + str(abs(valency[2]))+ '_' + str(abs(valency[3]))
@@ -40,8 +43,8 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','r') as file:
 # print(len(nconc_complete))       
     
 psi_complete,nconc_complete,uself_complete,q_complete,z,res= mgrf_1plate.mgrf_1plate(psi_complete,nconc_complete,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s)
-grandfe =0# energy_1plate.grandfe_mgrf_1plate(psi_complete,nconc_complete,uself_complete,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s)
-
+grandfe = 0#energy_1plate.grandfe_mgrf_1plate(psi_complete,nconc_complete,uself_complete,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s)
+print(grandfe)
 print('MGRF done')
 
 stop = timeit.default_timer()

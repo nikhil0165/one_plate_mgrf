@@ -7,9 +7,6 @@ from numerical_param import*
 
 def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma, domain, epsilon):  # psi_guess from mean-field PB acts as a initial guess
 
-    print(f'tolerance={tolerance}')
-    print(f'selfe_ratio={selfe_ratio}')
-
     grid_points = len(psi_guess)
     bounds = (0,domain)
     Lz = bounds[1]
@@ -100,10 +97,12 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
 
         psi.change_scales(1)
         psi_g = psi['g']
-        #print('PB done')
+#        print('PB done')
+        if (np.any(np.isnan(psi_g))):
+            print('nan in psi')
         n_profile,coeff_useless = num_concn.nconc_mgrf(psi_g, uself, eta_profile, uself_bulk, n_bulk, valency, vol_ions, eta_bulk,equal_vols)
         uself_profile = selfe_1plate.uself_complete(n_profile, n_bulk,rad_ions, valency, domain,epsilon)
-        #print('selfe_done in the loop')
+#        print('selfe_done in the loop')
         convergence_tot = np.true_divide(np.linalg.norm(uself_profile - uself),np.linalg.norm(uself))
 
         # mixing old self-energy and new self-energy
