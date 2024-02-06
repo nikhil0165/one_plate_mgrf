@@ -43,7 +43,7 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','r') as file:
 # print(len(psi_profile))                                                                                                                                                                                 
 # print(len(n_profile))       
     
-psi_profile,n_profile,uself_profile,q_complete,z,res= mgrf_1plate.mgrf_1plate(psi_profile[N_exc:],n_profile[N_exc:],n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
+psi_profile,n_profile,uself_profile,q_profile,z,res= mgrf_1plate.mgrf_1plate(psi_profile[N_exc:],n_profile[N_exc:],n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 grandfe = energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print(grandfe)
 print('MGRF done')
@@ -100,7 +100,7 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','w') as file:
     file.create_dataset('psi_d',data = psi_profile*psi_c)
     file.create_dataset('nconc_d',data = n_profile*nconc_c/N_A)
     file.create_dataset('uself_d',data = uself_profile*(1/beta))
-    file.create_dataset('charge_d',data = q_complete*(nconc_c*ec))
+    file.create_dataset('charge_d',data = q_profile*(nconc_c*ec))
     file.create_dataset('n_bulk_d',data = n_bulk_d)
 
     # Store all spatial profiles (non-dimensional)
@@ -108,7 +108,7 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','w') as file:
     file.create_dataset('psi',data = psi_profile)
     file.create_dataset('nconc',data = n_profile)
     file.create_dataset('uself',data = uself_profile)
-    file.create_dataset('charge',data = q_complete)
+    file.create_dataset('charge',data = q_profile)
     file.create_dataset('n_bulk',data =n_bulk)
 
     # Store free energy
