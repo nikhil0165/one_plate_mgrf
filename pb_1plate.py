@@ -4,13 +4,13 @@ from numerical_param import*
 import num_concn
 import calculate
 
-def pb_1plate(psi_guess,n_bulk,valency, sigma, domain, epsilon):  # psi_guess from Debye Hueckel acts as a initial guess
+def pb_1plate(psi_guess,n_bulk,valency, sigma, domain, epsilon_s):  # psi_guess from Debye Hueckel acts as a initial guess
 
     grid_points = len(psi_guess)
     bounds = (0,domain)
     Lz = bounds[1]
-    coeffs = [n_bulk[i] * valency[i]/epsilon for i in range(len(valency))]
-    slope1 = -sigma/epsilon
+    coeffs = [n_bulk[i] * valency[i]/epsilon_s for i in range(len(valency))]
+    slope1 = -sigma/epsilon_s
 
     # Bases
     coords = d3.CartesianCoordinates('z')
@@ -59,7 +59,7 @@ def pb_1plate(psi_guess,n_bulk,valency, sigma, domain, epsilon):  # psi_guess fr
     z = np.squeeze(z)
 
     q_profile = calculate.charge_density(n_profile, valency)
-    res= calculate.res_1plate(psi['g'],q_profile,bounds,sigma,epsilon)
+    res= calculate.res_1plate(psi['g'],q_profile,bounds,sigma,epsilon_s)
     print("Gauss's law residual for mean-field PB is = " + str(res))
 
     return psi['g'], n_profile,z

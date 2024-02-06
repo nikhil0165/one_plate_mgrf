@@ -4,12 +4,12 @@ import selfe_1plate
 import selfe_bulk
 
 # free energy from mgrf theory for 1 plate 
-def grandfe_mgrf_1plate(psi, n_profile, uself_profile,n_bulk, valency,rad_ions, vol_ions, vol_sol, sigma, domain, epsilon):
+def grandfe_mgrf_1plate(psi, n_profile, uself_profile,n_bulk, valency,rad_ions, vol_ions, vol_sol, sigma, domain, epsilon_s, epsilon_p):
 
     grandfe = 0.5*psi[0]*sigma
     nodes = len(n_profile)-1
     n_bulk_profile = np.multiply(np.ones((nodes, len(valency))), n_bulk)
-    grandfe_bulk = grandfe_mgrf_bulk(n_bulk_profile,n_bulk, valency,rad_ions, vol_ions,vol_sol, domain, epsilon)
+    grandfe_bulk = grandfe_mgrf_bulk(n_bulk_profile,n_bulk, valency,rad_ions, vol_ions,vol_sol, domain, epsilon_s)
 
     utau = np.zeros((nodes+1, len(valency)))
     taus, weights = np.polynomial.legendre.leggauss(grandfe_quads)
@@ -30,7 +30,7 @@ def grandfe_mgrf_1plate(psi, n_profile, uself_profile,n_bulk, valency,rad_ions, 
     grandfe = grandfe + (1 / vol_sol) * np.sum(np.log(1 - vol_local) * dz)
 
     for k in range(0, len(taus)):
-            utau = utau + 0.5*weights[k]*selfe_1plate.uself_complete((0.5*taus[k]+0.5)*n_profile,(0.5*taus[k]+0.5)*n_bulk,rad_ions, valency,domain, epsilon)
+            utau = utau + 0.5*weights[k]*selfe_1plate.uself_complete((0.5*taus[k]+0.5)*n_profile,(0.5*taus[k]+0.5)*n_bulk,rad_ions, valency,domain, epsilon_s, epsilon_p)
 
     utau_local = 0.5 * (utau[:-1] + utau[1:])
     grandfe = grandfe + np.sum(n_local * utau_local * dz[:, np.newaxis])
@@ -40,12 +40,12 @@ def grandfe_mgrf_1plate(psi, n_profile, uself_profile,n_bulk, valency,rad_ions, 
 
 # free energy from mgrf theory for bulk solution
 
-def grandfe_mgrf_bulk(n_bulk_profile,n_bulk, valency,rad_ions,vol_ions, vol_sol, domain, epsilon):
+def grandfe_mgrf_bulk(n_bulk_profile,n_bulk, valency,rad_ions,vol_ions, vol_sol, domain, epsilon_s):
 
     grandfe = 0
     nodes = len(n_bulk_profile)
     vol_bulk = sum([n_bulk[i] * vol_ions[i] for i in range(len(vol_ions))])
-    u_bulk = selfe_bulk.uselfb_numerical(n_bulk_profile, n_bulk, rad_ions, valency, domain, epsilon)
+    u_bulk = selfe_bulk.uselfb_numerical(n_bulk_profile, n_bulk, rad_ions, valency, domain, epsilon_s)
     utau_bulk = np.zeros_like(u_bulk)
     taus, weights = np.polynomial.legendre.leggauss(grandfe_quads)
 
@@ -60,7 +60,7 @@ def grandfe_mgrf_bulk(n_bulk_profile,n_bulk, valency,rad_ions,vol_ions, vol_sol,
     grandfe = grandfe + np.sum(dz*(1/vol_sol)*np.log(1-vol_bulk))
 
     for k in range(0, len(taus)):
-            utau_bulk = utau_bulk + 0.5 * weights[k] * selfe_bulk.uselfb_numerical((0.5 * taus[k] + 0.5) * n_bulk_profile,(0.5*taus[k]+0.5)*n_bulk, rad_ions, valency,domain, epsilon)
+            utau_bulk = utau_bulk + 0.5 * weights[k] * selfe_bulk.uselfb_numerical((0.5 * taus[k] + 0.5) * n_bulk_profile,(0.5*taus[k]+0.5)*n_bulk, rad_ions, valency,domain, epsilon_s)
     
     grandfe = grandfe + np.sum(n_bulk * utau_bulk * dz[:,np.newaxis])
     grandfe = grandfe - np.sum(n_bulk * u_bulk * dz[:,np.newaxis])

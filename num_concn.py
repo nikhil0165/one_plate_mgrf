@@ -9,9 +9,6 @@ def nconc_pb(psi, valency, n_bulk):
 
 # function to calculate num and coeffs for mgrf_1plate use
 def nconc_mgrf(psi,uself,eta_profile,uself_bulk, n_bulk, valency, vol_ions,eta_bulk, equal_vols):
-    nodes=len(psi)
-    n_profile = np.zeros((nodes,len(valency)))
-    coeffs = np.zeros((nodes,len(valency)))
     if equal_vols:
         A = n_bulk* np.exp(-np.array(valency) * psi[:,np.newaxis] - (uself - uself_bulk) + vol_ions * eta_bulk)
         coeffs = valency * n_bulk* np.exp(-(uself - uself_bulk) + vol_ions * eta_bulk)
@@ -24,11 +21,11 @@ def nconc_mgrf(psi,uself,eta_profile,uself_bulk, n_bulk, valency, vol_ions,eta_b
     return n_profile,coeffs
 
 # function to calculate concentration profile for given psi profile, n_initial is the initial guess
-def nconc_complete(psi, n_initial,uself_bulk,n_bulk, valency, rad_ions, vol_ions, vol_sol, domain, epsilon):
+def nconc_complete(psi, n_initial,uself_bulk,n_bulk, valency, rad_ions, vol_ions, vol_sol,  domain, epsilon_s, epsilon_p):
 
     eta_bulk = calculate.eta_loc(n_bulk, vol_ions, vol_sol)
     eta_profile = calculate.eta_profile(n_initial,vol_ions,vol_sol)
-    nodes = len(psi)
+    dist_exc = np.max(rad_ions)
 
     # profile variables
     n_profile = np.copy(n_initial)
@@ -39,7 +36,7 @@ def nconc_complete(psi, n_initial,uself_bulk,n_bulk, valency, rad_ions, vol_ions
     equal_vols = np.all(vol_diff < vol_sol * 1e-5)
 
     # initializing the self energy 
-    uself_profile = selfe_1plate.uself_complete(n_guess, n_bulk,rad_ions, valency,domain, epsilon)
+    uself_profile = selfe_1plate.uself_complete(n_guess, n_bulk,rad_ions, valency,domain, epsilon_s, epsilon_p)
 
     # Iteration
     convergence = np.inf
@@ -54,7 +51,7 @@ def nconc_complete(psi, n_initial,uself_bulk,n_bulk, valency, rad_ions, vol_ions
             n_profile = n_bulk * np.exp(-np.array(valency)*psi[:,np.newaxis] - (uself_profile - uself_bulk) - vol_ions * (eta_profile[:,np.newaxis] - eta_bulk))
         convergence = np.true_divide(np.linalg.norm(n_profile - n_guess),np.linalg.norm(n_guess))
         n_guess = (num_ratio) * n_profile + (1-num_ratio) * n_guess
-        uself_profile = selfe_1plate.uself_complete(n_guess,n_bulk, rad_ions, valency, domain,epsilon)
+        uself_profile = selfe_1plate.uself_complete(n_guess,n_bulk, rad_ions, valency,domain,epsilon_s, epsilon_p)
         eta_profile = calculate.eta_profile(n_guess,vol_ions,vol_sol)
         if p%10==0:
             print('num='+str(convergence))

@@ -46,9 +46,10 @@ k_b = 1.38064852 * pow(10, -23)  # boltzmann's constant
 N_A = 6.02214*pow(10,23) # Avogadro number
 epsilon_o_d = 8.854187 * pow(10, -12)  # permittivity in vaccuum
 beta = 1 / (k_b * Temp)  # beta
-epsilonr_s_d = 80  # relative permittivity/dielectric constant
+epsilonr_s_d = 80  # relative permittivity/dielectric constant of solvent
+epsilonr_p_d = 1 # relative permittivity of plate/charged surface
 epsilon_s_d = epsilon_o_d * epsilonr_s_d  # permittivity of the medium
-
+epsilon_p_d = epsilon_o_d * epsilonr_p_d  # permittivity of the plate/surface
 
 ## Characteristic variables - dont play with this
 
@@ -84,6 +85,7 @@ print('domain in Ang = ' +str(domain_d*lambda_d_d/pow(10,-10)))
 ## Scaling the variables with characteristic variables
 
 epsilon_s = epsilon_s_d / epsilon_c
+epsilon_p = epsilon_p_d / epsilon_c
 n_bulk = np.true_divide(n_bulk_d,nconc_c)
 sigma_i = sigma_in_d/sigma_c
 sigma = sigma_d/sigma_c

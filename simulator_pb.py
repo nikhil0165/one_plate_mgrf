@@ -32,10 +32,10 @@ print('PB_done')
 #print(psi_complete)
 
 # # #print(*psi_complete)
-psi_complete,nconc_complete,uself_complete, q_complete, z_lg, res= mgrf_1plate.mgrf_1plate(psi_complete,nconc_complete,n_bulk,valency,rad_ions,vol_ions, vol_sol,sigma,domain,epsilon_s)
+psi_complete,nconc_complete,uself_complete, q_complete, z_lg, res= mgrf_1plate.mgrf_1plate(psi_complete,nconc_complete,n_bulk,valency,rad_ions,vol_ions, vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print('MGRF_done')
 print(psi_complete[0:5])
-grandfe =0# energy_1plate.grandfe_mgrf_1plate(psi_complete,nconc_complete,uself_complete,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s)
+grandfe =energy_1plate.grandfe_mgrf_1plate(psi_complete,nconc_complete,uself_complete,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print(grandfe)
 
 stop = timeit.default_timer()
@@ -43,10 +43,10 @@ print('Time: ', stop - start)
 
 if cb2_d != 0:
     file_dir = os.getcwd() + '/results-mixture' + str(abs(valency[0]))+ '_' + str(abs(valency[1])) + '_' + str(abs(valency[2]))+ '_' + str(abs(valency[3]))
-    file_name =  str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_d), 2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(rad_ions_d[2],2)) + '_' + str(round(rad_ions_d[3],2)) + '_' + str(round(sigma_d, 5))
+    file_name =  str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_d), 2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(rad_ions_d[2],2)) + '_' + str(round(rad_ions_d[3],2)) + '_' + str(round(sigma_d, 5)) + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5))
 else:
     file_dir = os.getcwd() + '/results' + str(abs(valency[0])) + '_' + str(abs(valency[1]))
-    file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5))  + '_' + str(round(float(domain_d), 2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_d, 5))
+    file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5))  + '_' + str(round(float(domain_d), 2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_d, 5)) + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5))
 
 ### Create the output directory if it doesn't exist
 
@@ -61,7 +61,7 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5', 'w') as file:
     file.attrs['char_length'] = l_b
     file.attrs['beta'] = beta
     file.attrs['epsilon_s'] = epsilonr_s_d
-    file.attrs['epsilon_p'] = epsilonr_s_d
+    file.attrs['epsilon_p'] = epsilonr_p_d
     file.attrs['cb1'] = cb1_d
     file.attrs['cb2'] = cb2_d
     file.attrs['surface_charge'] = sigma_d

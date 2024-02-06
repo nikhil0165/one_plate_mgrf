@@ -42,8 +42,8 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','r') as file:
 # print(len(psi_complete))                                                                                                                                                                                 
 # print(len(nconc_complete))       
     
-psi_complete,nconc_complete,uself_complete,q_complete,z,res= mgrf_1plate.mgrf_1plate(psi_complete,nconc_complete,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s)
-grandfe = 0#energy_1plate.grandfe_mgrf_1plate(psi_complete,nconc_complete,uself_complete,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s)
+psi_complete,nconc_complete,uself_complete,q_complete,z,res= mgrf_1plate.mgrf_1plate(psi_complete,nconc_complete,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
+grandfe = energy_1plate.grandfe_mgrf_1plate(psi_complete,nconc_complete,uself_complete,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print(grandfe)
 print('MGRF done')
 
@@ -52,9 +52,9 @@ stop = timeit.default_timer()
 print('Time: ',stop - start)
 
 if cb2_d != 0:
-    file_name =  str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_d),2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(rad_ions_d[2],2)) + '_' + str(round(rad_ions_d[3],2)) + '_' + str(round(sigma_d,5))
+    file_name =  str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_d),2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(rad_ions_d[2],2)) + '_' + str(round(rad_ions_d[3],2)) + '_' + str(round(sigma_d,5))+ '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5))
 else:
-    file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5))  + '_' + str(round(float(domain_d),2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_d,5))
+    file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5))  + '_' + str(round(float(domain_d),2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_d,5)) + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5))
 
 
 # Writing everything in SI units
@@ -65,7 +65,7 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','w') as file:
     file.attrs['char_length'] = l_b
     file.attrs['beta'] = beta
     file.attrs['epsilon_s'] = epsilonr_s_d
-    file.attrs['epsilon_p'] = epsilonr_s_d
+    file.attrs['epsilon_p'] = epsilonr_p_d
     file.attrs['cb1'] = cb1_d
     file.attrs['cb2'] = cb2_d
     file.attrs['surface_charge'] = sigma_d

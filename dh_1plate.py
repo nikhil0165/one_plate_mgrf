@@ -2,14 +2,14 @@ from packages import *
 import calculate
 import num_concn
 
-def dh_1plate(n_bulk,valency,sigma,grid_points,domain,epsilon):
+def dh_1plate(n_bulk,valency,sigma,grid_points,domain,epsilon_s):
 
     bounds = (0,domain)
     Lz = bounds[1]
-    slope = -sigma/epsilon
+    slope = -sigma/epsilon_s
 
     #Making the LHS
-    kappa_2 = calculate.kappa_sqr(n_bulk,valency,epsilon)
+    kappa_2 = calculate.kappa_sqr(n_bulk,valency,epsilon_s)
 
     # Bases
     coords = d3.CartesianCoordinates('z')
