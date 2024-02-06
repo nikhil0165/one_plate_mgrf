@@ -32,7 +32,7 @@ print('PB_done')
 #print(psi_profile)
 
 # # #print(*psi_profile)
-psi_profile,n_profile,uself_profile, q_profile, z_lg, res= mgrf_1plate.mgrf_1plate(psi_profile,n_profile,n_bulk,valency,rad_ions,vol_ions, vol_sol,sigma,domain,epsilon_s, epsilon_p)
+psi_profile,n_profile,uself_profile, q_profile, z, res= mgrf_1plate.mgrf_1plate(psi_profile,n_profile,n_bulk,valency,rad_ions,vol_ions, vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print('MGRF_done')
 print(psi_profile[0:5])
 grandfe =energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
