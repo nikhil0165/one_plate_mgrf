@@ -124,6 +124,10 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
 
 #    n_profile,uself_profile = num_concn.nconc_complete(psi_g,n_profile,uself_bulk,n_bulk,valency,rad_ions,vol_ions,vol_sol,domain,epsilon_s,epsilon_p,equal_vols)
     
+
+
+#   psi_g,n_profile,uself_profile,Z = calculate.profile_extender(psi_g,n_profile,uself_profile,np.max(rad_ions),Z)
+
     q_profile = calculate.charge_density(n_profile, valency)
     res= calculate.res_1plate(psi_g,q_profile,bounds,sigma,epsilon_s)
     print("Gauss's law residual for MGRF is = " + str(res))

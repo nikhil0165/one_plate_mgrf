@@ -24,18 +24,18 @@ variables = {name: value for name, value in input_physical.__dict__.items() if n
 
 # The EDL structure calculations start here
 
-psi_complete,nconc_complete,z = dh_1plate.dh_1plate(n_bulk,valency,sigma,N_grid,domain,epsilon_s)
+psi_profile,n_profile,z = dh_1plate.dh_1plate(n_bulk,valency,sigma,N_grid,domain,epsilon_s)
 print('DH_done')
-#print(psi_complete)
-psi_complete, nconc_complete,z = pb_1plate.pb_1plate(psi_complete,n_bulk,valency,sigma,domain,epsilon_s)
+#print(psi_profile)
+psi_profile, n_profile,z = pb_1plate.pb_1plate(psi_profile,n_bulk,valency,sigma,domain,epsilon_s)
 print('PB_done')
-#print(psi_complete)
+#print(psi_profile)
 
-# # #print(*psi_complete)
-psi_complete,nconc_complete,uself_complete, q_complete, z_lg, res= mgrf_1plate.mgrf_1plate(psi_complete,nconc_complete,n_bulk,valency,rad_ions,vol_ions, vol_sol,sigma,domain,epsilon_s, epsilon_p)
+# # #print(*psi_profile)
+psi_profile,n_profile,uself_profile, q_complete, z_lg, res= mgrf_1plate.mgrf_1plate(psi_profile,n_profile,n_bulk,valency,rad_ions,vol_ions, vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print('MGRF_done')
-print(psi_complete[0:5])
-grandfe =energy_1plate.grandfe_mgrf_1plate(psi_complete,nconc_complete,uself_complete,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
+print(psi_profile[0:5])
+grandfe =energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print(grandfe)
 
 stop = timeit.default_timer()
@@ -69,7 +69,8 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5', 'w') as file:
 
     # Storing numerical parameters as attributes of the root group
     file.attrs['s_conv'] = s_conv
-    file.attrs['N_grid'] = len(psi_complete)
+    file.attrs['N_grid'] = len(psi_profile)-np.nonzero(n_profile[:,0])[0][0]
+    file.attrs['N_exc'] = np.nonzero(n_profile[:,0])[0][0]
     file.attrs['quads'] = quads
     file.attrs['grandfe_quads'] = grandfe_quads
     file.attrs['dealias'] = dealias
@@ -91,17 +92,17 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5', 'w') as file:
 
     # Store all spatial profiles  (SI units)
     file.create_dataset('z_d', data = z*l_c)
-    file.create_dataset('psi_d', data = psi_complete*psi_c)
-    file.create_dataset('nconc_d', data = nconc_complete*nconc_c/N_A)
-    file.create_dataset('uself_d', data = uself_complete*(1/beta))
+    file.create_dataset('psi_d', data = psi_profile*psi_c)
+    file.create_dataset('nconc_d', data = n_profile*nconc_c/N_A)
+    file.create_dataset('uself_d', data = uself_profile*(1/beta))
     file.create_dataset('charge_d', data = q_complete*(nconc_c*ec))
     file.create_dataset('n_bulk_d', data = n_bulk_d)
 
     # Store all spatial profiles (non-dimensional)
     file.create_dataset('z', data = z)
-    file.create_dataset('psi', data = psi_complete)
-    file.create_dataset('nconc', data = nconc_complete)
-    file.create_dataset('uself', data = uself_complete)
+    file.create_dataset('psi', data = psi_profile)
+    file.create_dataset('nconc', data = n_profile)
+    file.create_dataset('uself', data = uself_profile)
     file.create_dataset('charge',data = q_complete)
     file.create_dataset('n_bulk', data =n_bulk)
 

@@ -1,5 +1,4 @@
 from packages import *
-from numerical_param import*
 
 def ionic_strength(n_position,valency):  # n_position corresponds to number of ions for a particular position/node
     I = np.sum((1 / len(valency)) * (np.power(valency,2)) * n_position)
@@ -39,6 +38,20 @@ def kappa_sqr_profile(n_profile,valency,epsilon): #square of screening factor fo
 def kappa_profile(n_profile,valency,  epsilon): #screening factor for all positions
     kappa = np.apply_along_axis(kappa_loc,1,n_profile,valency,epsilon)
     return kappa
+
+def psi_extender(psi_profile,dist_exc, z_lg):
+    slope1 = (psi_profile[1]-psi_profile[0])/(z_lg[1] - z_lg[0])
+    z_ext1 = np.linspace(0,dist_exc,10,endpoint=False)
+    psi_extend1 = slope1 * z_ext1 + psi_profile[0] - slope1 * dist_exc
+    return np.hstack((z_ext1,(z_lg + dist_exc))), np.hstack((psi_extend1,psi_profile))
+
+def profile_extender(psi_profile,n_profile,uself_profile, z_lg,dist_exc,N_exc):
+    slope1 = (psi_profile[1]-psi_profile[0])/(z_lg[1] - z_lg[0])
+    z_ext1 = np.linspace(0,dist_exc,N_exc,endpoint=False)
+    psi_extend1 = slope1 * z_ext1 + psi_profile[0] - slope1 * dist_exc
+    n_profile = np.concatenate((np.zeros((N_exc,len(n_profile[0,:]))), n_profile), axis=0)
+    uself_profile = np.concatenate((np.zeros((N_exc,len(n_profile[0,:]))),uself_profile),axis = 0)
+    return np.hstack((psi_extend1,psi_profile)), n_profile,uself_profile,np.hstack((z_ext1,z_lg+dist_exc))
 
 def interpolator(psi_complete,nconc_complete,bounds,new_grid): # function to change grid points of psi and nconc fields
 
@@ -80,7 +93,7 @@ def res_1plate(psi_profile,q_profile,bounds,sigma,epsilon): # calculate the resi
     nodes = len(psi_profile)
     coords = d3.CartesianCoordinates('z')
     dist = d3.Distributor(coords,dtype = np.float64)  # No mesh for serial / automatic parallelization
-    zbasis = d3.Chebyshev(coords['z'],size = nodes,bounds = bounds,dealias = dealias)
+    zbasis = d3.Chebyshev(coords['z'],size = nodes,bounds = bounds,dealias = 3/2)
 
     # Fields
     z = dist.local_grids(zbasis)
