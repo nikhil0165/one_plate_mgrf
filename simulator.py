@@ -27,16 +27,16 @@ print(f'tolerance = {tolerance}')
 
 if cb2_d != 0:
     file_dir = os.getcwd() + '/results-mixture' + str(abs(valency[0]))+ '_' + str(abs(valency[1])) + '_' + str(abs(valency[2]))+ '_' + str(abs(valency[3]))
-    file_name =  str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_in_d),2))+ '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(rad_ions_d[2],2)) + '_' + str(round(rad_ions_d[3],2)) + '_' + str(round(sigma_in_d,5))
+    file_name =  str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_in_d),2))+ '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(rad_ions_d[2],2)) + '_' + str(round(rad_ions_d[3],2)) + '_' + str(round(sigma_in_d,5))  + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5))
 else:
     file_dir = os.getcwd() + '/results' + str(abs(valency[0])) + '_' + str(abs(valency[1]))
-    file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_in_d),2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_in_d,5))
+    file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_in_d),2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_in_d,5))  + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5))
 
 with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','r') as file:
     # Retrieve psi and nconc
     psi_profile = np.array(file['psi'])
     n_profile = np.array(file['nconc'])
-    N_exc = np.array(file['N_exc'])
+    N_exc = file.attrs.get('N_exc')
 
 
 # psi_profile,n_profile = calculate.interpolator(psi_profile,n_profile,(0,domain),N_grid)                                                                                                              
@@ -44,9 +44,13 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','r') as file:
 # print(len(n_profile))       
     
 psi_profile,n_profile,uself_profile,q_profile,z,res= mgrf_1plate.mgrf_1plate(psi_profile[N_exc:],n_profile[N_exc:],n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
+print('MGRF_done')
+print(psi_profile[0:5])
+
+
 grandfe = energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print(grandfe)
-print('MGRF done')
+
 
 stop = timeit.default_timer()
 

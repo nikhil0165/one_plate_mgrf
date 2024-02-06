@@ -4,13 +4,13 @@ from packages import *
 
 cb1_d = 0.5# prinamry salt bulk concentration
 cb2_d = 0.0# secondary salt bulk concentration
-valency1 = [3,-1] # valency of primary salt
+valency1 = [2,-1] # valency of primary salt
 valency2 = [1,-1] # valency of secondary salt
-born_radius1 = 2.0# radius of cation in Angstroms
-born_radius2 = 2.0 # radius of anion in Angstroms
+born_radius1 = 1.5# radius of cation in Angstroms
+born_radius2 = born_radius1 # radius of anion in Angstroms
 rad_sol_d = max(born_radius1,born_radius2)
 
-domain_d= 100.0 #  this times debye huckel length
+domain_d= 20.0 #  this times debye huckel length
 domain_in_d = domain_d # domain length of the initial guess also in debye huckel length units 
 sigma_d = -0.15 # surface charge density
 sigma_in_d = -0.15# initial point for starting calculation in case of high surface charge densities
