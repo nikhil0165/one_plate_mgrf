@@ -39,17 +39,13 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','r') as file:
     N_exc = file.attrs.get('N_exc')
 
 
-# psi_profile,n_profile = calculate.interpolator(psi_profile,n_profile,(0,domain),N_grid)                                                                                                              
-# print(len(psi_profile))                                                                                                                                                                                 
-# print(len(n_profile))       
-    
 psi_profile,n_profile,uself_profile,q_profile,z,res= mgrf_1plate.mgrf_1plate(psi_profile[N_exc:],n_profile[N_exc:],n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print('MGRF_done')
 print(psi_profile[0:5])
 
 
 grandfe = energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
-print(grandfe)
+print(f'grandfe = {grandfe}')
 
 
 stop = timeit.default_timer()
