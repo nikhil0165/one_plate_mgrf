@@ -39,19 +39,20 @@ def kappa_profile(n_profile,valency,  epsilon): #screening factor for all positi
     kappa = np.apply_along_axis(kappa_loc,1,n_profile,valency,epsilon)
     return kappa
 
-def psi_extender(psi_profile,dist_exc, z_lg):
-    slope1 = (psi_profile[1]-psi_profile[0])/(z_lg[1] - z_lg[0])
+def psi_extender(psi_profile,dist_exc, z):
+    slope1 = (psi_profile[1]-psi_profile[0])/(z[1] - z[0])
     z_ext1 = np.linspace(0,dist_exc,10,endpoint=False)
     psi_extend1 = slope1 * z_ext1 + psi_profile[0] - slope1 * dist_exc
-    return np.hstack((z_ext1,(z_lg + dist_exc))), np.hstack((psi_extend1,psi_profile))
+    return np.hstack((z_ext1,(z + dist_exc))), np.hstack((psi_extend1,psi_profile))
 
-def profile_extender(psi_profile,n_profile,uself_profile, z_lg,dist_exc,N_exc):
-    slope1 = (psi_profile[1]-psi_profile[0])/(z_lg[1] - z_lg[0])
+def profile_extender(psi_profile,n_profile,uself_profile, z,dist_exc,N_exc):
+
+    slope1 = (psi_profile[1]-psi_profile[0])/(z[1] - z[0])
     z_ext1 = np.linspace(0,dist_exc,N_exc,endpoint=False)
     psi_extend1 = slope1 * z_ext1 + psi_profile[0] - slope1 * dist_exc
     n_profile = np.concatenate((np.zeros((N_exc,len(n_profile[0,:]))), n_profile), axis=0)
     uself_profile = np.concatenate((np.zeros((N_exc,len(n_profile[0,:]))),uself_profile),axis = 0)
-    return np.hstack((psi_extend1,psi_profile)), n_profile,uself_profile,np.hstack((z_ext1,z_lg+dist_exc))
+    return np.hstack((psi_extend1,psi_profile)), n_profile,uself_profile,np.hstack((z_ext1,z+dist_exc))
 
 def interpolator(psi_complete,nconc_complete,bounds,new_grid): # function to change grid points of psi and nconc fields
 

@@ -1,3 +1,5 @@
+import numpy as np
+
 from packages import *
 import num_concn
 import calculate
@@ -13,9 +15,10 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
     slope = -sigma/epsilon_s
 
     psi_g = np.copy(psi_guess)
-    eta_profile=calculate.eta_profile(nconc_guess,vol_ions,vol_sol)
     uself_profile = selfe_1plate.uself_complete(nconc_guess,n_bulk,rad_ions,valency,domain,epsilon_s,epsilon_p)
     uself = np.copy(uself_profile)
+    eta_profile=calculate.eta_profile(nconc_guess,vol_ions,vol_sol)
+    eta = np.copy(eta_profile)
     print('selfe_done before the loop')
 
     # Bulk properties
@@ -27,7 +30,8 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
     vol_diff = np.abs(vol_ions - vol_sol)
     equal_vols = np.all(vol_diff < vol_sol * 1e-5)
 
-    n_profile, coeffs = num_concn.nconc_mgrf(psi_g, uself_profile, eta_profile, uself_bulk, n_bulk, valency, vol_ions, eta_bulk, equal_vols)
+    n_profile, coeffs = num_concn.nconc_mgrf(psi_g,uself_profile,eta_profile,uself_bulk,n_bulk,valency,vol_ions,eta_bulk,equal_vols)
+
     coeffs = coeffs/epsilon_s
 
     Z = None
@@ -54,7 +58,7 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
         lift = lambda A, n: d3.Lift(A, lift_basis, n)
         c0 = dist.Field(bases = zbasis)
         c1 = dist.Field(bases = zbasis)
-        n_profile_useless, coeffs = num_concn.nconc_mgrf(psi_g, uself, eta_profile, uself_bulk, n_bulk, valency, vol_ions,eta_bulk, equal_vols)
+        n_profile_useless, coeffs = num_concn.nconc_mgrf(psi_g,uself,eta,uself_bulk,n_bulk,valency,vol_ions,eta_bulk,equal_vols)
         coeffs = coeffs/epsilon_s
 
         # lambda function for RHS, dedalus understands lambda functions can differentiate it for newton iteration
@@ -100,16 +104,19 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
 #        print('PB done')
         if (np.any(np.isnan(psi_g))):
             print('nan in psi')
-        n_profile,coeff_useless = num_concn.nconc_mgrf(psi_g, uself, eta_profile, uself_bulk, n_bulk, valency, vol_ions, eta_bulk,equal_vols)
+
+        n_profile,coeff_useless = num_concn.nconc_mgrf(psi_g,uself,eta,uself_bulk,n_bulk,valency,vol_ions,eta_bulk,equal_vols)
         uself_profile = selfe_1plate.uself_complete(n_profile, n_bulk,rad_ions, valency, domain,epsilon_s,epsilon_p)
-#        print('selfe_done in the loop')
-        convergence_tot = np.true_divide(np.linalg.norm(uself_profile - uself),np.linalg.norm(uself))
+        eta_profile = calculate.eta_profile(n_profile,vol_ions,vol_sol)
+
+        convergence_tot = np.true_divide(np.linalg.norm(uself_profile - uself),np.linalg.norm(uself)) ##+ np.true_divide(np.linalg.norm(eta_profile - eta),np.linalg.norm(eta))
 
         # mixing old self-energy and new self-energy
         uself = selfe_ratio*uself_profile + (1-selfe_ratio)*uself
 
         # mixing old eta and new_eta
-        eta_profile = eta_ratio*calculate.eta_profile(n_profile,vol_ions,vol_sol) +(1-eta_ratio)*eta_profile
+        eta = eta_ratio*eta_profile +(1-eta_ratio)*eta
+
         q_profile = calculate.charge_density(n_profile, valency)
 
         Z = np.squeeze(z)
