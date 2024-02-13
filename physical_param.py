@@ -4,16 +4,16 @@ from packages import *
 
 cb1_d = 0.5# prinamry salt bulk concentration
 cb2_d = 0.0# secondary salt bulk concentration
-valency1 = [2,-1] # valency of primary salt
+valency1 = [3,-1] # valency of primary salt
 valency2 = [1,-1] # valency of secondary salt
-born_radius1 = 1.5# radius of cation in Angstroms
+born_radius1 = 2.1# radius of cation in Angstroms
 born_radius2 = born_radius1 # radius of anion in Angstroms
 rad_sol_d = max(born_radius1,born_radius2)
 
-domain_d= 20.0 #  this times debye huckel length
+domain_d= 30.0 #  this times debye huckel length
 domain_in_d = domain_d # domain length of the initial guess also in debye huckel length units 
-sigma_d = -0.01 # surface charge density
-sigma_in_d = -0.01# initial point for starting calculation in case of high surface charge densities
+sigma_d = -0.15 # surface charge density
+sigma_in_d = -0.15# initial point for starting calculation in case of high surface charge densities
 
 vol_sol_d = 4/3*pi*pow(rad_sol_d*pow(10, -10),3)# volume of solvent molecule assuming its a sphere
 
