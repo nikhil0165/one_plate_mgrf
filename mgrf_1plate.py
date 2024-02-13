@@ -30,9 +30,9 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
     vol_diff = np.abs(vol_ions - vol_sol)
     equal_vols = np.all(vol_diff < vol_sol * 1e-5)
 
-    n_profile, coeffs = num_concn.nconc_mgrf(psi_g,uself_profile,eta_profile,uself_bulk,n_bulk,valency,vol_ions,eta_bulk,equal_vols)
-
-    coeffs = coeffs/epsilon_s
+    n_profile = None
+    #n_profile, coeffs = num_concn.nconc_mgrf(psi_g,uself_profile,eta_profile,uself_bulk,n_bulk,valency,vol_ions,eta_bulk,equal_vols)
+    #coeffs = coeffs/epsilon_s
 
     Z = None
 
@@ -106,16 +106,23 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
             print('nan in psi')
 
         n_profile,coeff_useless = num_concn.nconc_mgrf(psi_g,uself,eta,uself_bulk,n_bulk,valency,vol_ions,eta_bulk,equal_vols)
-        uself_profile = selfe_1plate.uself_complete(n_profile, n_bulk,rad_ions, valency, domain,epsilon_s,epsilon_p)
-        eta_profile = calculate.eta_profile(n_profile,vol_ions,vol_sol)
 
-        convergence_tot = np.true_divide(np.linalg.norm(uself_profile - uself),np.linalg.norm(uself)) ##+ np.true_divide(np.linalg.norm(eta_profile - eta),np.linalg.norm(eta))
+        convergence_tot = np.true_divide(np.linalg.norm(n_profile - nconc_guess),np.linalg.norm(nconc_guess))
 
-        # mixing old self-energy and new self-energy
-        uself = selfe_ratio*uself_profile + (1-selfe_ratio)*uself
+        nconc_guess = num_ratio*n_profile + (1-num_ratio)*nconc_guess
+        uself = selfe_1plate.uself_complete(nconc_guess, n_bulk,rad_ions, valency, domain,epsilon_s,epsilon_p)
+        eta = calculate.eta_profile(nconc_guess,vol_ions,vol_sol)
+        uself_profile = uself
 
-        # mixing old eta and new_eta
-        eta = eta_ratio*eta_profile +(1-eta_ratio)*eta
+
+        # uself_profile = selfe_1plate.uself_complete(n_profile, n_bulk,rad_ions, valency, domain,epsilon_s,epsilon_p)
+        # eta_profile = calculate.eta_profile(n_profile,vol_ions,vol_sol)
+        # #
+        # convergence_tot = np.true_divide(np.linalg.norm(uself_profile - uself),np.linalg.norm(uself)) ##+ np.true_divide(np.linalg.norm(eta_profile - eta),np.linalg.norm(eta))
+        # # mixing old self-energy and new self-energy
+        # uself = selfe_ratio*uself_profile + (1-selfe_ratio)*uself
+        # # mixing old eta and new_eta
+        # eta = eta_ratio*eta_profile +(1-eta_ratio)*eta
 
         q_profile = calculate.charge_density(n_profile, valency)
 
@@ -129,7 +136,7 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
             print('converg at iter = ' + str(p) + ' is ' + str(convergence_tot))
 
 
-#    n_profile,uself_profile = num_concn.nconc_complete(psi_g,n_profile,uself_bulk,n_bulk,valency,rad_ions,vol_ions,vol_sol,domain,epsilon_s,epsilon_p,equal_vols)
+    n_profile,uself_profile = num_concn.nconc_complete(psi_g,n_profile,uself_bulk,n_bulk,valency,rad_ions,vol_ions,vol_sol,domain,epsilon_s,epsilon_p)
     
     q_profile = calculate.charge_density(n_profile, valency)
     res= calculate.res_1plate(psi_g,q_profile,bounds,sigma,epsilon_s)
