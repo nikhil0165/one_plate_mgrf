@@ -5,7 +5,7 @@ import mgrf_1plate
 from physical_param import *
 import energy_1plate
 
-start = timeit.default_timer()
+
 
 # Argument parser to accept the input files                                                                                                                                                                        
 parser = argparse.ArgumentParser(description='Code to calculate EDL structure using MGRF Theory with mean-field PB as an initial guess')
@@ -31,18 +31,21 @@ psi_profile, n_profile,z = pb_1plate.pb_1plate(psi_profile,n_bulk,valency,sigma,
 print('PB_done')
 #print(psi_profile)
 
-# # #print(*psi_profile)
+start = timeit.default_timer()
+
 psi_profile,n_profile,uself_profile, q_profile, z, res= mgrf_1plate.mgrf_1plate(psi_profile,n_profile,n_bulk,valency,rad_ions,vol_ions, vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print('MGRF_done')
 print(psi_profile[0:5])
+
+time =timeit.default_timer() - start
+print(f'time = {time}')
 
 grandfe =energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print(f'grandfe = {grandfe}')
 
 
 
-time =timeit.default_timer() - start
-print(f'time = {time}')
+
 
 if cb2_d != 0:
     file_dir = os.getcwd() + '/results-mixture' + str(abs(valency[0]))+ '_' + str(abs(valency[1])) + '_' + str(abs(valency[2]))+ '_' + str(abs(valency[3]))
