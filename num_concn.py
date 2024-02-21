@@ -53,7 +53,7 @@ def nconc_complete(psi, n_initial,uself_bulk,n_bulk, valency, rad_ions, vol_ions
         n_guess = (num_ratio) * n_profile + (1-num_ratio) * n_guess
         uself_profile = selfe_1plate.uself_complete(n_guess,n_bulk, rad_ions, valency,domain,epsilon_s, epsilon_p)
         eta_profile = calculate.eta_profile(n_guess,vol_ions,vol_sol)
-        if p%10==0:
+        if p%1==0:
             print('num='+str(convergence))
         if p >= iter_max:
             print("too many iterations for convergence")
