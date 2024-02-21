@@ -43,12 +43,14 @@ print(f'time = {time}')
 grandfe =energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print(f'grandfe = {grandfe}')
 
+N_exc = np.nonzero(n_profile[:,0])[0][0]
+
 if cb2_d != 0:
     file_dir = os.getcwd() + '/results-mixture' + str(abs(valency[0]))+ '_' + str(abs(valency[1])) + '_' + str(abs(valency[2]))+ '_' + str(abs(valency[3]))
-    file_name =  str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_d), 2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(rad_ions_d[2],2)) + '_' + str(round(rad_ions_d[3],2)) + '_' + str(round(sigma_d, 5)) + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5)) + '_' + str(int(N_grid))
+    file_name =  str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_d), 2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(rad_ions_d[2],2)) + '_' + str(round(rad_ions_d[3],2)) + '_' + str(round(sigma_d, 5)) + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5)) + '_' + str(int(N_grid - N_exc))
 else:
     file_dir = os.getcwd() + '/results' + str(abs(valency[0])) + '_' + str(abs(valency[1]))
-    file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5))  + '_' + str(round(float(domain_d), 2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_d, 5)) + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5)) + '_' + str(int(N_grid))
+    file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5))  + '_' + str(round(float(domain_d), 2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_d, 5)) + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5)) + '_' + str(int(N_grid - N_exc))
 
 ### Create the output directory if it doesn't exist
 

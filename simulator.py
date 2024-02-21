@@ -53,9 +53,9 @@ print(f'grandfe = {grandfe}')
 
 
 if cb2_d != 0:
-    file_name =  str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_d),2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(rad_ions_d[2],2)) + '_' + str(round(rad_ions_d[3],2)) + '_' + str(round(sigma_d,5))+ '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5)) + '_' + str(int(N_exc))
+    file_name =  str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_d),2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(rad_ions_d[2],2)) + '_' + str(round(rad_ions_d[3],2)) + '_' + str(round(sigma_d,5))+ '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5)) + '_' + str(int(len(psi_profile) - N_exc))
 else:
-    file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5))  + '_' + str(round(float(domain_d),2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_d,5)) + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5)) + '_' + str(int(N_exc))
+    file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5))  + '_' + str(round(float(domain_d),2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_d,5)) + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5)) + '_' + str(int(len(psi_profile) - N_exc))
 
 
 # Writing everything in SI units
