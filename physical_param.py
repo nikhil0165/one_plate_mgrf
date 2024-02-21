@@ -12,7 +12,7 @@ rad_sol_d = max(born_radius1,born_radius2)
 
 domain_d= 20.0 #  this times debye huckel length
 domain_in_d = domain_d # domain length of the initial guess also in debye huckel length units 
-sigma_d = -0.1 # surface charge density
+sigma_d = -0.01 # surface charge density
 sigma_in_d = -0.01# initial point for starting calculation in case of high surface charge densities
 
 vol_sol_d = 4/3*pi*pow(rad_sol_d*pow(10, -10),3)# volume of solvent molecule assuming its a sphere
@@ -37,7 +37,6 @@ print(f'valency = {valency}')
 print(f'rad_ions_d = {rad_ions_d}')
 print(f'rad_sol_d = {rad_sol_d}')
 
-
 ## Physical constants
 
 Temp = 298# Temperature in Kelvin
@@ -47,7 +46,7 @@ N_A = 6.02214*pow(10,23) # Avogadro number
 epsilon_o_d = 8.854187 * pow(10, -12)  # permittivity in vaccuum
 beta = 1 / (k_b * Temp)  # beta
 epsilonr_s_d = 80  # relative permittivity/dielectric constant of solvent
-epsilonr_p_d = 80 # relative permittivity of plate/charged surface
+epsilonr_p_d = 1 # relative permittivity of plate/charged surface
 epsilon_s_d = epsilon_o_d * epsilonr_s_d  # permittivity of the medium
 epsilon_p_d = epsilon_o_d * epsilonr_p_d  # permittivity of the plate/surface
 
@@ -65,6 +64,8 @@ sigma_c = (ec/pow(l_c,2)) # characteristic surface charge density
 vol_c = pow(l_c,3) # characteristic volume
 nconc_c = 1/vol_c # characteristic number density
 conc_c = 1/vol_c # characteristic concentration
+
+print(f'electostatic_coupling = {(2*pi*pow(valency[0],3)*(l_c**2)*abs(sigma_d)/ec)}')
 
 
 ## Derived variables

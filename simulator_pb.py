@@ -40,8 +40,9 @@ grandfe =energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n
 print(f'grandfe = {grandfe}')
 
 
-stop = timeit.default_timer()
-print('Time: ', stop - start)
+
+time =timeit.default_timer() - start
+print(f'time = {time}')
 
 if cb2_d != 0:
     file_dir = os.getcwd() + '/results-mixture' + str(abs(valency[0]))+ '_' + str(abs(valency[1])) + '_' + str(abs(valency[2]))+ '_' + str(abs(valency[3]))
@@ -86,6 +87,7 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5', 'w') as file:
     file.attrs['tolerance_num'] = tolerance_num
     file.attrs['tolerance_greens'] = tolerance_greens
     file.attrs['residual'] = res
+    file.attrs['time'] = time
     
     # Storing parameter arrays
     file.create_dataset('valency', data = valency)
