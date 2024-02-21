@@ -133,6 +133,7 @@ def Gcap_full(n_profile,n_bulk,valency,s,domain,epsilon_s,epsilon_p,dist_exc): #
     Qz.change_scales(1)
     Qz = Qz['g']
 
+    #print(s,np.max(Pz-s)/s,np.max(Qz+omega_b)/omega_b)
     ## Sturm-Liouville for G
     G = (1 / epsilon_s) * np.true_divide(1,Pz-Qz)
 
