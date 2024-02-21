@@ -21,15 +21,16 @@ variables = {name: value for name,value in input_physical.__dict__.items() if no
 
 print(f'ncc_cutoff_mgrf = {ncc_cutoff_mgrf}')
 print(f'ncc_cutoff_greens= {ncc_cutoff_greens}')
-print(f'selfe_ratio = {selfe_ratio}')
+print(f'num_ratio = {selfe_ratio}')
 print(f'tolerance = {tolerance}')
+print(f'N_grid = {N_grid}')
 
 if cb2_d != 0:
     file_dir = os.getcwd() + '/results-mixture' + str(abs(valency[0]))+ '_' + str(abs(valency[1])) + '_' + str(abs(valency[2]))+ '_' + str(abs(valency[3]))
-    file_name =  str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_in_d),2))+ '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(rad_ions_d[2],2)) + '_' + str(round(rad_ions_d[3],2)) + '_' + str(round(sigma_in_d,5))  + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5))
+    file_name =  str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_in_d),2))+ '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(rad_ions_d[2],2)) + '_' + str(round(rad_ions_d[3],2)) + '_' + str(round(sigma_in_d,5))  + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5)) + '_' + str(int(N_grid))
 else:
     file_dir = os.getcwd() + '/results' + str(abs(valency[0])) + '_' + str(abs(valency[1]))
-    file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_in_d),2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_in_d,5))  + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5))
+    file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_in_d),2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_in_d,5))  + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5)) + '_' + str(int(N_grid))
 
 with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','r') as file:
     # Retrieve psi and nconc
