@@ -10,7 +10,7 @@ def pb_1plate(psi_guess,n_bulk,valency, sigma, domain, epsilon_s):  # psi_guess 
     bounds = (0,domain)
     Lz = bounds[1]
     coeffs = [n_bulk[i] * valency[i]/epsilon_s for i in range(len(valency))]
-    slope1 = -sigma/epsilon_s
+    slope = -sigma/epsilon_s
 
     # Bases
     coords = d3.CartesianCoordinates('z')
@@ -36,8 +36,8 @@ def pb_1plate(psi_guess,n_bulk,valency, sigma, domain, epsilon_s):  # psi_guess 
     problem.add_equation("-lap(psi) + lift(tau_1,-1) + lift(tau_2,-2) = boltz(psi)")
 
     # Boundary conditions
-    problem.add_equation("dz(psi)(z=0) = slope1")
-    problem.add_equation("psi(z=Lz) = 0")
+    problem.add_equation("dz(psi)(z=0) = slope")
+    problem.add_equation("dz(psi)(z=Lz) = 0")
 
     # Initial guess
     psi['g'] = psi_guess
@@ -62,5 +62,5 @@ def pb_1plate(psi_guess,n_bulk,valency, sigma, domain, epsilon_s):  # psi_guess 
     res= calculate.res_1plate(psi['g'],q_profile,bounds,sigma,epsilon_s)
     print("Gauss's law residual for mean-field PB is = " + str(res))
 
-    return psi['g'], n_profile,z
+    return psi['g'], n_profile,z,psi(z=0).evaluate()['g']
 

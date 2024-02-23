@@ -45,11 +45,23 @@ def psi_extender(psi_profile,dist_exc, z):
     psi_extend1 = slope1 * z_ext1 + psi_profile[0] - slope1 * dist_exc
     return np.hstack((z_ext1,(z + dist_exc))), np.hstack((psi_extend1,psi_profile))
 
-def profile_extender(psi_profile,n_profile,uself_profile, z,dist_exc,N_exc):
+def profile_extender(psi_profile,n_profile,uself_profile,bounds,dist_exc,N_exc):
 
-    slope1 = (psi_profile[1]-psi_profile[0])/(z[1] - z[0])
+    nodes = len(psi_profile)
+    coords = d3.CartesianCoordinates('z')
+    dist = d3.Distributor(coords,dtype = np.float64)  # No mesh for serial / automatic parallelization
+    zbasis = d3.Chebyshev(coords['z'],size = nodes,bounds = bounds,dealias = 3 / 2)
+
+    # Fields
+    z = np.squeeze(dist.local_grids(zbasis))
+    psi = dist.Field(name = 'psi',bases = zbasis)
+    psi['g'] = psi_profile
+
+    grad_psi = d3.Differentiate(psi,coords['z'])
+    slope1 = grad_psi(z = 0).evaluate()['g'][0]
+
     z_ext1 = np.linspace(0,dist_exc,N_exc,endpoint=False)
-    psi_extend1 = slope1 * z_ext1 + psi_profile[0] - slope1 * dist_exc
+    psi_extend1 = slope1 * z_ext1 + psi(z = 0).evaluate()['g'] - slope1 * dist_exc
     n_profile = np.concatenate((np.zeros((N_exc,len(n_profile[0,:]))), n_profile), axis=0)
     uself_profile = np.concatenate((np.zeros((N_exc,len(n_profile[0,:]))),uself_profile),axis = 0)
     return np.hstack((psi_extend1,psi_profile)), n_profile,uself_profile,np.hstack((z_ext1,z+dist_exc))
@@ -94,7 +106,7 @@ def res_1plate(psi_profile,q_profile,bounds,sigma,epsilon): # calculate the resi
     nodes = len(psi_profile)
     coords = d3.CartesianCoordinates('z')
     dist = d3.Distributor(coords,dtype = np.float64)  # No mesh for serial / automatic parallelization
-    zbasis = d3.Chebyshev(coords['z'],size = nodes,bounds = bounds,dealias = 3/2)
+    zbasis = d3.Chebyshev(coords['z'],size = nodes,bounds = bounds,dealias = 3 / 2)
 
     # Fields
     z = dist.local_grids(zbasis)
@@ -112,5 +124,6 @@ def res_1plate(psi_profile,q_profile,bounds,sigma,epsilon): # calculate the resi
     res[0] = slope_0 + sigma/epsilon
     res[nodes-1] = slope_end#psi_profile[-1]
     res[1:nodes-1] = lap_psi['g'][1:nodes-1] + q_profile[1:nodes-1]/epsilon
+
     return np.max(np.abs(res))
 

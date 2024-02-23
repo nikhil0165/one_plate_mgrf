@@ -29,16 +29,18 @@ print(f'N_grid = {N_grid}')
 
 # The EDL structure calculations start here
 
-psi_profile,n_profile,z = dh_1plate.dh_1plate(n_bulk,valency,sigma,N_grid,domain,epsilon_s)
+psi_profile,n_profile,z, surface_psi = dh_1plate.dh_1plate(n_bulk,valency,sigma,N_grid,domain,epsilon_s)
+res= 0
 print('DH_done')
-#print(psi_profile)
-psi_profile, n_profile,z = pb_1plate.pb_1plate(psi_profile,n_bulk,valency,sigma,domain,epsilon_s)
+print(psi_profile[0:5])
+
+psi_profile, n_profile,z, surface_psi = pb_1plate.pb_1plate(psi_profile,n_bulk,valency,sigma,domain,epsilon_s)
 print('PB_done')
-#print(psi_profile)
+print(psi_profile[0:5]*psi_c)
 
 start = timeit.default_timer()
 
-psi_profile,n_profile,uself_profile, q_profile, z, res= mgrf_1plate.mgrf_1plate(psi_profile,n_profile,n_bulk,valency,rad_ions,vol_ions, vol_sol,sigma,domain,epsilon_s, epsilon_p)
+psi_profile,n_profile,uself_profile, q_profile, z,  surface_psi, res= mgrf_1plate.mgrf_1plate(psi_profile,n_profile,n_bulk,valency,rad_ions,vol_ions, vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print('MGRF_done')
 print(psi_profile[0:5])
 
@@ -92,8 +94,7 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5', 'w') as file:
     file.attrs['tolerance_pb'] = tolerance_pb
     file.attrs['tolerance_num'] = tolerance_num
     file.attrs['tolerance_greens'] = tolerance_greens
-    file.attrs['residual'] = res
-    file.attrs['time'] = time
+
     
     # Storing parameter arrays
     file.create_dataset('valency', data = valency)
@@ -119,6 +120,9 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5', 'w') as file:
     # Store free energy
     file.attrs['grandfe'] = grandfe # nondimensional
     file.attrs['grandfe_d'] = grandfe*(1/beta) # SI units
+    file.attrs['residual'] = res
+    file.attrs['surface_psi'] = surface_psi
+    file.attrs['time'] = time
 
 
 

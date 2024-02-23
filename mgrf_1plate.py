@@ -1,3 +1,5 @@
+import gc
+
 import numpy as np
 
 from packages import *
@@ -19,8 +21,6 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
     eta_guess=calculate.eta_profile(nconc_guess,vol_ions,vol_sol)
 
     n_profile = None
-    Z = None
-
     print('selfe_done before the loop')
 
     # Bulk properties
@@ -32,8 +32,6 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
     vol_diff = np.abs(vol_ions - vol_sol)
     equal_vols = np.all(vol_diff < vol_sol * 1e-5)
     print(f'equal_vols = {equal_vols}')
-
-
 
     # Solving the matrix
     convergence_tot = np.inf
@@ -101,8 +99,9 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
 
         psi.change_scales(1)
         psi_g = psi['g']
+        #
 #        print('PB done')
-        if (np.any(np.isnan(psi_g))):
+        if np.any(np.isnan(psi_g)):
             print('nan in psi')
 
         n_profile,coeff_useless = num_concn.nconc_mgrf(psi_g,uself_guess,eta_guess,uself_bulk,n_bulk,valency,vol_ions,eta_bulk,equal_vols)
@@ -114,10 +113,8 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
         uself_guess = selfe_1plate.uself_complete(nconc_guess, n_bulk,rad_ions, valency, domain,epsilon_s,epsilon_p)
         eta_guess = calculate.eta_profile(nconc_guess,vol_ions,vol_sol)
 
-        Z = np.squeeze(z)
-        
-        # deleting dedalus fields as precuation
-        del coords,dist,zbasis,z,psi,tau_1,tau_2,dz,lift_basis,lift,problem,solver,pert_norm,c0,c1,boltz0,boltz1
+        # deleting dedalus fields as precaution
+        del psi,coords,dist,zbasis,z,tau_1,tau_2,dz,lift_basis,lift,problem,solver,pert_norm,c0,c1,boltz0,boltz1
 
         p = p+1
         if p%10==0:
@@ -125,6 +122,7 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
 
 
     #n_profile,uself_profile = num_concn.nconc_complete(psi_g,n_profile,uself_bulk,n_bulk,valency,rad_ions,vol_ions,vol_sol,domain,epsilon_s,epsilon_p)
+
     uself_profile = selfe_1plate.uself_complete(n_profile,n_bulk,rad_ions,valency,domain,epsilon_s,epsilon_p)
     eta_profile = calculate.eta_profile(n_profile,vol_ions,vol_sol)
     q_profile = calculate.charge_density(n_profile, valency)
@@ -132,10 +130,10 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
     res= calculate.res_1plate(psi_g,q_profile,bounds,sigma,epsilon_s)
     print("Gauss's law residual for MGRF is = " + str(res))
 
+    psi_g,n_profile,uself_profile,Z = calculate.profile_extender(psi_g,n_profile,uself_profile,bounds,np.max(rad_ions),N_exc)
 
-    psi_g,n_profile,uself_profile,Z = calculate.profile_extender(psi_g,n_profile,uself_profile,Z,np.max(rad_ions),N_exc)
+    surface_psi = psi_g[0]
 
-
-    return psi_g, n_profile,uself_profile,q_profile,Z, res
+    return psi_g, n_profile,uself_profile,q_profile,Z, surface_psi, res
 
  

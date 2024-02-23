@@ -37,10 +37,10 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','r') as file:
     psi_profile = np.array(file['psi'])
     n_profile = np.array(file['nconc'])
     N_exc = file.attrs.get('N_exc')
-
+    grandfe = file.attrs.get('N_exc')
 start = timeit.default_timer()
 
-psi_profile,n_profile,uself_profile,q_profile,z,res= mgrf_1plate.mgrf_1plate(psi_profile[N_exc:],n_profile[N_exc:],n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
+psi_profile,n_profile,uself_profile,q_profile,z,surface_psi,res= mgrf_1plate.mgrf_1plate(psi_profile[N_exc:],n_profile[N_exc:],n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print('MGRF_done')
 print(psi_profile[0:5])
 
@@ -89,9 +89,8 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','w') as file:
     file.attrs['tolerance_pb'] = tolerance_pb
     file.attrs['tolerance_num'] = tolerance_num
     file.attrs['tolerance_greens'] = tolerance_greens
-    file.attrs['residual'] = res
-    file.attrs['time'] = time
-    
+
+
     # Storing parameter arrays
     file.create_dataset('valency',data = valency)
     file.create_dataset('radii',data = rad_ions_d)
@@ -113,10 +112,11 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','w') as file:
     file.create_dataset('charge',data = q_profile)
     file.create_dataset('n_bulk',data =n_bulk)
 
-    # Store free energy
+    # Store scalar variables
     file.attrs['grandfe'] = grandfe # nondimensional
     file.attrs['grandfe_d'] = grandfe*(1/beta) # SI units
+    file.attrs['residual'] = res
+    file.attrs['surface_psi'] = surface_psi
+    file.attrs['time'] = time
 
-
-    
 
