@@ -37,12 +37,12 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','r') as file:
     psi_profile = np.array(file['psi'])
     n_profile = np.array(file['nconc'])
     N_exc = file.attrs.get('N_exc')
-    grandfe = file.attrs.get('N_exc')
+
 start = timeit.default_timer()
 
 psi_profile,n_profile,uself_profile,q_profile,z,surface_psi,res= mgrf_1plate.mgrf_1plate(psi_profile[N_exc:],n_profile[N_exc:],n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print('MGRF_done')
-print(psi_profile[0:5])
+print(f'surface_psi = {surface_psi}')
 
 N_exc = np.nonzero(n_profile[:,0])[0][0]
 
