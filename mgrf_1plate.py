@@ -1,7 +1,3 @@
-import gc
-
-import numpy as np
-
 from packages import *
 import num_concn
 import calculate

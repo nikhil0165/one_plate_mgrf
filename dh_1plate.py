@@ -40,4 +40,4 @@ def dh_1plate(n_bulk,valency,sigma,grid_points,domain,epsilon_s):
 
     n_profile = num_concn.nconc_pb(psi['g'],valency,n_bulk)
 
-    return psi['g'],n_profile,np.squeeze(z), psi(z=0).evaluate()['g']
+    return psi['g'],n_profile,np.squeeze(z), psi(z=0).evaluate()['g'][0]

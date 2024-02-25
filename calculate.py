@@ -61,7 +61,7 @@ def profile_extender(psi_profile,n_profile,uself_profile,bounds,dist_exc,N_exc):
     slope1 = grad_psi(z = 0).evaluate()['g'][0]
 
     z_ext1 = np.linspace(0,dist_exc,N_exc,endpoint=False)
-    psi_extend1 = slope1 * z_ext1 + psi(z = 0).evaluate()['g'] - slope1 * dist_exc
+    psi_extend1 = slope1 * z_ext1 + psi(z = 0).evaluate()['g'][0] - slope1 * dist_exc
     n_profile = np.concatenate((np.zeros((N_exc,len(n_profile[0,:]))), n_profile), axis=0)
     uself_profile = np.concatenate((np.zeros((N_exc,len(n_profile[0,:]))),uself_profile),axis = 0)
     return np.hstack((psi_extend1,psi_profile)), n_profile,uself_profile,np.hstack((z_ext1,z+dist_exc))

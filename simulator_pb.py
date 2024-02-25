@@ -32,17 +32,17 @@ print(f'N_grid = {N_grid}')
 psi_profile,n_profile,z, surface_psi = dh_1plate.dh_1plate(n_bulk,valency,sigma,N_grid,domain,epsilon_s)
 res= 0
 print('DH_done')
-print(psi_profile[0:5])
+print(f'surface_psi = {surface_psi}')
 
 psi_profile, n_profile,z, surface_psi = pb_1plate.pb_1plate(psi_profile,n_bulk,valency,sigma,domain,epsilon_s)
 print('PB_done')
-print(psi_profile[0:5]*psi_c)
+print(f'surface_psi = {surface_psi}')
 
 start = timeit.default_timer()
 
 psi_profile,n_profile,uself_profile, q_profile, z,  surface_psi, res= mgrf_1plate.mgrf_1plate(psi_profile,n_profile,n_bulk,valency,rad_ions,vol_ions, vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print('MGRF_done')
-print(psi_profile[0:5])
+print(f'surface_psi = {surface_psi}')
 
 time =timeit.default_timer() - start
 print(f'time = {time}')
