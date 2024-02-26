@@ -23,6 +23,7 @@ def grandfe_mgrf_1plate(psi, n_profile, uself_profile,n_bulk, valency,rad_ions, 
     dist = d3.Distributor(coords, dtype = np.float64)  # No mesh for serial / automatic parallelization
     zbasis = d3.Chebyshev(coords['z'], size = len(n_profile), bounds = (0,domain))
     z = np.squeeze(dist.local_grids(zbasis))
+
     dz = np.diff(z)
     n_local = 0.5 * (n_profile[:-1] + n_profile[1:])
     psi_local = 0.5 * (psi[:-1] + psi[1:])

@@ -56,6 +56,7 @@ def profile_extender(psi_profile,n_profile,uself_profile,bounds,dist_exc,N_exc):
     z = np.squeeze(dist.local_grids(zbasis))
     psi = dist.Field(name = 'psi',bases = zbasis)
     psi['g'] = psi_profile
+    surface_psi = psi(z=0).evaluate()['g'][0]
 
     grad_psi = d3.Differentiate(psi,coords['z'])
     slope1 = grad_psi(z = 0).evaluate()['g'][0]
@@ -64,7 +65,7 @@ def profile_extender(psi_profile,n_profile,uself_profile,bounds,dist_exc,N_exc):
     psi_extend1 = slope1 * z_ext1 + psi(z = 0).evaluate()['g'][0] - slope1 * dist_exc
     n_profile = np.concatenate((np.zeros((N_exc,len(n_profile[0,:]))), n_profile), axis=0)
     uself_profile = np.concatenate((np.zeros((N_exc,len(n_profile[0,:]))),uself_profile),axis = 0)
-    return np.hstack((psi_extend1,psi_profile)), n_profile,uself_profile,np.hstack((z_ext1,z+dist_exc))
+    return np.hstack((psi_extend1,psi_profile)), n_profile,uself_profile,np.hstack((z_ext1,z+dist_exc)), surface_psi
 
 def interpolator(psi_complete,nconc_complete,bounds,new_grid): # function to change grid points of psi and nconc fields
 

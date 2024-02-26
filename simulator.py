@@ -37,6 +37,7 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','r') as file:
     psi_profile = np.array(file['psi'])
     n_profile = np.array(file['nconc'])
     N_exc = file.attrs.get('N_exc')
+    grandfe = file.attrs.get('grandfe')
 
 start = timeit.default_timer()
 

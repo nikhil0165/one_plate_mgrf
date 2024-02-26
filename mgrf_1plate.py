@@ -126,9 +126,9 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
     res= calculate.res_1plate(psi_g,q_profile,bounds,sigma,epsilon_s)
     print("Gauss's law residual for MGRF is = " + str(res))
 
-    psi_g,n_profile,uself_profile,Z = calculate.profile_extender(psi_g,n_profile,uself_profile,bounds,np.max(rad_ions),N_exc)
+    psi_g,n_profile,uself_profile,Z, surface_psi = calculate.profile_extender(psi_g,n_profile,uself_profile,bounds,np.max(rad_ions),N_exc)
 
-    surface_psi = psi_g[0]
+    #surface_psi = psi_g[0]
 
     return psi_g, n_profile,uself_profile,q_profile,Z, surface_psi, res
 
