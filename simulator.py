@@ -41,6 +41,10 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','r') as file:
 
 start = timeit.default_timer()
 
+psi_profile, n_profile, N_exc = calculate.interpolator(psi_profile[N_exc:],n_profile[N_exc:],(0,domain),N_grid)
+print(len(psi_profile))
+print(len(n_profile))
+
 psi_profile,n_profile,uself_profile,q_profile,z,surface_psi,res= mgrf_1plate.mgrf_1plate(psi_profile[N_exc:],n_profile[N_exc:],n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print('MGRF_done')
 print(f'surface_psi = {surface_psi}')
