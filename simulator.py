@@ -21,7 +21,7 @@ variables = {name: value for name,value in input_physical.__dict__.items() if no
 
 print(f'ncc_cutoff_mgrf = {ncc_cutoff_mgrf}')
 print(f'ncc_cutoff_greens= {ncc_cutoff_greens}')
-print(f'num_ratio = {selfe_ratio}')
+print(f'num_ratio = {num_ratio}')
 print(f'tolerance = {tolerance}')
 print(f'N_grid = {N_grid}')
 
@@ -54,7 +54,7 @@ N_exc = np.nonzero(n_profile[:,0])[0][0]
 time =timeit.default_timer() - start
 print(f'time = {time}')
 
-grandfe = energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
+grandfe = 0#energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print(f'grandfe = {grandfe}')
 
 

@@ -23,7 +23,7 @@ variables = {name: value for name, value in input_physical.__dict__.items() if n
 
 print(f'ncc_cutoff_mgrf = {ncc_cutoff_mgrf}')
 print(f'ncc_cutoff_greens= {ncc_cutoff_greens}')
-print(f'num_ratio = {selfe_ratio}')
+print(f'num_ratio = {num_ratio}')
 print(f'tolerance = {tolerance}')
 print(f'N_grid = {N_grid}')
 
