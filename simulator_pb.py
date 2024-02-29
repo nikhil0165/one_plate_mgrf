@@ -25,7 +25,7 @@ print(f'ncc_cutoff_mgrf = {ncc_cutoff_mgrf}')
 print(f'ncc_cutoff_greens= {ncc_cutoff_greens}')
 print(f'num_ratio = {num_ratio}')
 print(f'tolerance = {tolerance}')
-print(f'N_grid = {N_grid}')
+print(f'N_grid= {N_grid}')
 
 # The EDL structure calculations start here
 
@@ -49,8 +49,6 @@ print(f'time = {time}')
 
 grandfe =energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print(f'grandfe = {grandfe}')
-
-N_exc = np.nonzero(n_profile[:,0])[0][0]
 
 if cb2_d != 0:
     file_dir = os.getcwd() + '/results-mixture' + str(abs(valency[0]))+ '_' + str(abs(valency[1])) + '_' + str(abs(valency[2]))+ '_' + str(abs(valency[3]))
@@ -80,7 +78,7 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5', 'w') as file:
 
     # Storing numerical parameters as attributes of the root group
     file.attrs['s_conv'] = s_conv
-    file.attrs['N_grid'] = len(psi_profile)-np.nonzero(n_profile[:,0])[0][0]
+    file.attrs['domain'] = len(psi_profile)-np.nonzero(n_profile[:,0])[0][0]
     file.attrs['N_exc'] = np.nonzero(n_profile[:,0])[0][0]
     file.attrs['quads'] = quads
     file.attrs['grandfe_quads'] = grandfe_quads

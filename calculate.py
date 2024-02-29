@@ -47,10 +47,9 @@ def psi_extender(psi_profile,dist_exc, z):
 
 def profile_extender(psi_profile,n_profile,uself_profile,bounds,dist_exc,N_exc):
 
-    nodes = len(psi_profile)
     coords = d3.CartesianCoordinates('z')
     dist = d3.Distributor(coords,dtype = np.float64)  # No mesh for serial / automatic parallelization
-    zbasis = d3.Chebyshev(coords['z'],size = nodes,bounds = bounds,dealias = 3 / 2)
+    zbasis = d3.Chebyshev(coords['z'],size = len(psi_profile),bounds = bounds,dealias = 3 / 2)
 
     # Fields
     z = np.squeeze(dist.local_grids(zbasis))
@@ -62,7 +61,7 @@ def profile_extender(psi_profile,n_profile,uself_profile,bounds,dist_exc,N_exc):
     slope1 = grad_psi(z = 0).evaluate()['g'][0]
 
     z_ext1 = np.linspace(0,dist_exc,N_exc,endpoint=False)
-    psi_extend1 = slope1 * z_ext1 + psi(z = 0).evaluate()['g'][0] - slope1 * dist_exc
+    psi_extend1 = slope1 * z_ext1 + surface_psi - slope1 * dist_exc
     n_profile = np.concatenate((np.zeros((N_exc,len(n_profile[0,:]))), n_profile), axis=0)
     uself_profile = np.concatenate((np.zeros((N_exc,len(n_profile[0,:]))),uself_profile),axis = 0)
     return np.hstack((psi_extend1,psi_profile)), n_profile,uself_profile,np.hstack((z_ext1,z+dist_exc)), surface_psi
