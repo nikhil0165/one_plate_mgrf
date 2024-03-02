@@ -69,14 +69,15 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','w') as file:
 
     # Storing scalar variables as attributes of the root group
     file.attrs['ec_charge'] = ec
-    file.attrs['char_length'] = l_b
+    file.attrs['char_length'] = l_c
     file.attrs['beta'] = beta
     file.attrs['epsilon_s'] = epsilonr_s_d
     file.attrs['epsilon_p'] = epsilonr_p_d
     file.attrs['cb1'] = cb1_d
     file.attrs['cb2'] = cb2_d
     file.attrs['surface_charge'] = sigma_d
-    file.attrs['domain'] = domain_d
+    file.attrs['domain'] = domain
+    file.attrs['domain_d'] = domain * l_c
 
     # Storing numerical parameters as attributes of the root group
     file.attrs['s_conv'] = s_conv
