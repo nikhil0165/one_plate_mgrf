@@ -9,4 +9,5 @@ __pycache__
 *.png*
 *.idea*
 *plots*
+*_grid.py*
 make_param.py

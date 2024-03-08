@@ -24,11 +24,8 @@ def uself_short(n_profile,rad_ions,valency, epsilon_s): #short-range self-energy
     return u_short
 
 def uself_component(n_profile,n_bulk,valency,quad_point,domain,epsilon_s, epsilon_p,dist_exc): # integration component of u_long as per legendre-gauss quadrature
-    # start = timeit.default_timer()
     G_full= greens_function_1plate.Gcap_full(n_profile,n_bulk,valency,quad_point[0],domain,epsilon_s, epsilon_p,dist_exc)
-    # stop = timeit.default_timer()
-    # print('Time: ',stop - start)
-    G_free = np.ones(len(n_profile))*(1/(2*epsilon_s*quad_point[0]))##greens_function_1plate.Gcap_free(len(n_profile),quad_point[0],domain,epsilon_s)#
+    G_free = np.ones(len(n_profile))*(1/(2*epsilon_s*quad_point[0]))#greens_function_1plate.Gcap_free(len(n_profile),quad_point[0],domain,epsilon_s)##
     G_component = (G_full-G_free)
     u_component = quad_point[1] * (np.power(valency, 2) / (4 * np.pi)) * G_component[:,np.newaxis]
     return u_component
@@ -56,7 +53,7 @@ def uself_complete(n_profile,n_bulk,rad_ions,valency,domain,epsilon_s, epsilon_p
     u_short = uself_short(n_profile,rad_ions,valency,epsilon_s)
     u_pc = uself_point(n_profile,valency,epsilon_s)
     u_long = uself_long(n_profile,n_bulk,valency,domain,epsilon_s, epsilon_p,dist_exc = np.max(rad_ions))
-    u_self = u_short + u_pc + u_long
+    u_self = u_long + u_short + u_pc
     return u_self
 
 

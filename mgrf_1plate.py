@@ -17,13 +17,13 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
     eta_guess=calculate.eta_profile(nconc_guess,vol_ions,vol_sol)
 
     n_profile = None
-    print('selfe_done before the loop')
+    print('selfe_done for interface')
 
     # Bulk properties
     n_bulk_numerical = np.multiply(np.ones((grid_points,len(valency))),n_bulk)
     uself_bulk = selfe_bulk.uselfb_numerical(n_bulk_numerical, n_bulk, rad_ions, valency, domain,epsilon_s)[-1]
     eta_bulk = calculate.eta_loc(n_bulk, vol_ions, vol_sol)
-
+    print('selfe_done for bulk')
     # Checking if all molecules have same excluded volume
     vol_diff = np.abs(vol_ions - vol_sol)
     equal_vols = np.all(vol_diff < vol_sol * 1e-5)
@@ -52,8 +52,7 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
         c0 = dist.Field(bases = zbasis)
         c1 = dist.Field(bases = zbasis)
 
-        n_profile_useless, coeffs = num_concn.nconc_mgrf(psi_g,uself_guess,eta_guess,uself_bulk,n_bulk,valency,vol_ions,
-                                                         eta_bulk,equal_vols)
+        n_profile_useless, coeffs = num_concn.nconc_mgrf(psi_g,uself_guess,eta_guess,uself_bulk,n_bulk,valency,vol_ions,eta_bulk,equal_vols)
         coeffs = coeffs/epsilon_s
 
         # lambda function for RHS, dedalus understands lambda functions can differentiate it for newton iteration
@@ -88,21 +87,19 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
         solver = problem.build_solver(ncc_cutoff=ncc_cutoff_mgrf)
         pert_norm = np.inf
         psi.change_scales(dealias)
-        s = 0
+
         while pert_norm > tolerance_pb:
             solver.newton_iteration()
             pert_norm = sum(pert.allreduce_data_norm('c', 2) for pert in solver.perturbations)
-            s = s + 1
 
         psi.change_scales(1)
-        psi_g = psi['g']
-        #
-#        print('PB done')
+        psi_g = psi.allgather_data('g')
+
+        # print('PB done')
         if np.any(np.isnan(psi_g)):
             print('nan in psi')
 
-        n_profile,coeff_useless = num_concn.nconc_mgrf(psi_g,uself_guess,eta_guess,uself_bulk,n_bulk,valency,vol_ions,
-                                                       eta_bulk,equal_vols)
+        n_profile,coeff_useless = num_concn.nconc_mgrf(psi_g,uself_guess,eta_guess,uself_bulk,n_bulk,valency,vol_ions,eta_bulk,equal_vols)
 
         convergence_tot = np.true_divide(np.linalg.norm(n_profile - nconc_guess),np.linalg.norm(nconc_guess))
 
@@ -113,6 +110,7 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
 
         # deleting dedalus fields as precaution
         del psi,coords,dist,zbasis,z,tau_1,tau_2,dz,lift_basis,lift,problem,solver,pert_norm,c0,c1,boltz0,boltz1
+        gc.collect()
 
         p = p+1
         if p%10==0:
@@ -128,9 +126,8 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
     res= calculate.res_1plate(psi_g,q_profile,bounds,sigma,epsilon_s)
     print("Gauss's law residual for MGRF is = " + str(res))
 
-    psi_g,n_profile,uself_profile,Z, surface_psi = calculate.profile_extender(psi_g,n_profile,uself_profile,bounds,np.max(rad_ions),N_exc)
 
-    #surface_psi = psi_g[0]
+    psi_g,n_profile,uself_profile,Z, surface_psi = calculate.profile_extender(psi_g,n_profile,uself_profile,bounds,np.max(rad_ions),N_exc)
 
     return psi_g, n_profile,uself_profile,q_profile,Z, surface_psi, res
 

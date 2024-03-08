@@ -39,24 +39,17 @@ def kappa_profile(n_profile,valency,  epsilon): #screening factor for all positi
     kappa = np.apply_along_axis(kappa_loc,1,n_profile,valency,epsilon)
     return kappa
 
-def psi_extender(psi_profile,dist_exc, z):
-    slope1 = (psi_profile[1]-psi_profile[0])/(z[1] - z[0])
-    z_ext1 = np.linspace(0,dist_exc,10,endpoint=False)
-    psi_extend1 = slope1 * z_ext1 + psi_profile[0] - slope1 * dist_exc
-    return np.hstack((z_ext1,(z + dist_exc))), np.hstack((psi_extend1,psi_profile))
-
 def profile_extender(psi_profile,n_profile,uself_profile,bounds,dist_exc,N_exc):
 
     coords = d3.CartesianCoordinates('z')
     dist = d3.Distributor(coords,dtype = np.float64)  # No mesh for serial / automatic parallelization
-    zbasis = d3.Chebyshev(coords['z'],size = len(psi_profile),bounds = bounds,dealias = 3 / 2)
+    zbasis = d3.Chebyshev(coords['z'],size = len(psi_profile),bounds = bounds,dealias = 3/2)
 
-    # Fields
     z = np.squeeze(dist.local_grids(zbasis))
+
     psi = dist.Field(name = 'psi',bases = zbasis)
     psi['g'] = psi_profile
     surface_psi = psi(z=0).evaluate()['g'][0]
-
     grad_psi = d3.Differentiate(psi,coords['z'])
     slope1 = grad_psi(z = 0).evaluate()['g'][0]
 
@@ -64,9 +57,28 @@ def profile_extender(psi_profile,n_profile,uself_profile,bounds,dist_exc,N_exc):
     psi_extend1 = slope1 * z_ext1 + surface_psi - slope1 * dist_exc
     n_profile = np.concatenate((np.zeros((N_exc,len(n_profile[0,:]))), n_profile), axis=0)
     uself_profile = np.concatenate((np.zeros((N_exc,len(n_profile[0,:]))),uself_profile),axis = 0)
+
     return np.hstack((psi_extend1,psi_profile)), n_profile,uself_profile,np.hstack((z_ext1,z+dist_exc)), surface_psi
 
-def interpolator(psi_profile,n_profile,bounds,new_grid): # function to change grid points of psi and nconc fields
+
+def interpolator(psi_profile,domain,points):
+
+    grid_points = len(psi_profile)
+    coords1 = d3.CartesianCoordinates('z')
+    dist1 = d3.Distributor(coords1,dtype = np.float64)  # No mesh for serial / automatic parallelization
+    zbasis1 = d3.Chebyshev(coords1['z'],size = grid_points,bounds = (0,domain))
+
+    psi1 = dist1.Field(name = 'psi',bases = zbasis1)
+    psi1['g'] = psi_profile
+
+    psi_answer = np.zeros(len(points))
+    for i in range(0,len(points)):
+        psi_answer[i] = psi1(z = points[i]).evaluate()['g'][0]
+
+    return psi_answer
+
+
+def rescaler(psi_profile,n_profile,bounds,new_grid): # function to change grid points of psi and nconc fields
 
     grid_points = len(psi_profile)
     coords = d3.CartesianCoordinates('z')
@@ -123,7 +135,7 @@ def res_1plate(psi_profile,q_profile,bounds,sigma,epsilon): # calculate the resi
     
     res[0] = slope_0 + sigma/epsilon
     res[nodes-1] = slope_end#psi_profile[-1]
-    res[1:nodes-1] = lap_psi['g'][1:nodes-1] + q_profile[1:nodes-1]/epsilon
+    res[1:nodes-1] = lap_psi.allgather_data('g')[1:nodes-1] + q_profile[1:nodes-1]/epsilon
 
     return np.max(np.abs(res))
 

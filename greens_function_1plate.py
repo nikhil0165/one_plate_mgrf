@@ -1,9 +1,6 @@
-import numpy as np
-
 from packages import *
 import calculate
 from numerical_param import *
-
 
 def Gcap_free(grid_points,s,domain,epsilon): # function for \hat{Go}
 
@@ -25,9 +22,12 @@ def Gcap_free(grid_points,s,domain,epsilon): # function for \hat{Go}
     Pz = dist.Field(name = 'Pz',bases = zbasis)
     tau_1 = dist.Field(name = 'tau_1')
 
+    s_sqr = dist.Field(bases = zbasis)
+    s_sqr['g'] = s * s
+
     # Differential equation for Pz (U)
     problem = d3.NLBVP([Pz,tau_1],namespace = locals())
-    problem.add_equation("-dz(Pz) + s*s + lift(tau_1,-1) = Pz**2")
+    problem.add_equation("-dz(Pz) + s_sqr + lift(tau_1,-1) = Pz**2")
 
     # Boundary conditions for Pz/U
     problem.add_equation("Pz(z=0) = s")
@@ -44,7 +44,7 @@ def Gcap_free(grid_points,s,domain,epsilon): # function for \hat{Go}
         pert_norm0 = sum(pert0.allreduce_data_norm('c',2) for pert0 in solver0.perturbations)
 
     Pz.change_scales(1)
-    Pz = Pz['g']
+    Pz = Pz.allgather_data('g')
     Qz = -Pz
 
     ## Sturm-Liouville for G
@@ -64,7 +64,7 @@ def Gcap_full(n_profile,n_bulk,valency,s,domain,epsilon_s,epsilon_p,dist_exc): #
     # Bases
     coords = d3.CartesianCoordinates('z')
     dist = d3.Distributor(coords,dtype = np.float64) 
-    zbasis = d3.Chebyshev(coords['z'],size = grid_points,bounds = bounds,dealias = dealias)
+    zbasis = d3.Chebyshev(coords['z'],size = grid_points,bounds = bounds,dealias = 2)
 
     # General fields
     z = dist.local_grids(zbasis)
@@ -78,23 +78,24 @@ def Gcap_full(n_profile,n_bulk,valency,s,domain,epsilon_s,epsilon_p,dist_exc): #
     omega_b = np.sqrt(s * s + calculate.kappa_sqr(n_bulk,valency,epsilon_s))
     omega_min = min(omega_b,np.min(np.sqrt(omega_sqr['g'])))
     Pzo = s*np.tanh(np.arctanh(epsilon_p/epsilon_s) + s*dist_exc)
+    Qzo = -omega_b
 
     # Fields for G(Pz or log(U))
     Pz = dist.Field(name = 'Pz',bases = zbasis)
     tau_1 = dist.Field(name = 'tau_1')
 
     # Differential equation for Pz/U
-    problem = d3.NLBVP([Pz,tau_1],namespace = locals())
-    problem.add_equation("-dz(Pz) + omega_sqr + lift(tau_1,-1) = Pz**2")
+    problem1 = d3.NLBVP([Pz,tau_1],namespace = locals())
+    problem1.add_equation("-dz(Pz) + omega_sqr + lift(tau_1,-1) = Pz**2")
 
     # Boundary conditions for Pz
-    problem.add_equation("Pz(z=0) = Pzo")
+    problem1.add_equation("Pz(z=0) = Pzo")
 
     # Initial guess for Pz
-    Pz['g'] = Pzo
+    Pz['g'] = omega_b*np.tanh(np.arctanh(Pzo/omega_b) + omega_b*Zg)
 
     # Solver
-    solver1 = problem.build_solver(ncc_cutoff = ncc_cutoff_greens)
+    solver1 = problem1.build_solver(ncc_cutoff = ncc_cutoff_greens)
     pert_norm1 = np.inf
     Pz.change_scales(dealias)
     p = 0
@@ -104,24 +105,23 @@ def Gcap_full(n_profile,n_bulk,valency,s,domain,epsilon_s,epsilon_p,dist_exc): #
         pert_norm1 = sum(pert1.allreduce_data_norm('c',2) for pert1 in solver1.perturbations)
 
     Pz.change_scales(1)
-    Pz = Pz['g']
+    Pz_data = Pz.allgather_data('g')
 
     # Fields for G(Qz or log(V))
     Qz = dist.Field(name = 'Qz',bases = zbasis)
     tau_1 = dist.Field(name = 'tau_1')
 
     # Differential equation for Qz/V
-    problem1 = d3.NLBVP([Qz,tau_1],namespace = locals())
-    problem1.add_equation("-dz(Qz) + omega_sqr + lift(tau_1,-1) = Qz**2")
+    problem2 = d3.NLBVP([Qz,tau_1],namespace = locals())
+    problem2.add_equation("-dz(Qz) + omega_sqr + lift(tau_1,-1) = Qz**2")
 
     # Boundary conditions for Qz
-    problem1.add_equation("Qz(z=Lz) = -omega_b")
+    problem2.add_equation("Qz(z=Lz) = -omega_b")
 
     # Initial guess for Qz
-    Qz['g'] = -omega_b
-
+    Qz['g'] = omega_b*np.tanh(np.arctanh(Qzo/omega_b) + omega_b*(Zg-Lz))
     # Solver
-    solver2 = problem1.build_solver(ncc_cutoff = ncc_cutoff_greens)
+    solver2 = problem2.build_solver(ncc_cutoff = ncc_cutoff_greens)
     pert_norm2 = np.inf
     Qz.change_scales(dealias)
     q = 1
@@ -131,19 +131,24 @@ def Gcap_full(n_profile,n_bulk,valency,s,domain,epsilon_s,epsilon_p,dist_exc): #
         pert_norm2 = sum(pert2.allreduce_data_norm('c',2) for pert2 in solver2.perturbations)
 
     Qz.change_scales(1)
-    Qz = Qz['g']
+    Qz_data = Qz.allgather_data('g')
 
-    #print(s,np.max(Pz-s)/s,np.max(Qz+omega_b)/omega_b)
+
     ## Sturm-Liouville for G
-    G = (1 / epsilon_s) * np.true_divide(1,Pz-Qz)
+    G = (1 / epsilon_s) * np.true_divide(1,Pz_data - Qz_data)
 
-    if np.any(np.isnan(Pz)):
+    Gg = dist.Field(name = 'Gg',bases = zbasis)
+    Gg['g'] = G
+
+    # surf_P  = Pz(z=Lz).evaluate()['g'][0]
+    # surf_Q = Qz(z=Lz).evaluate()['g'][0]
+    if np.any(np.isnan(Pz_data)):
         print("The Pz array contains at least one 'nan' for s= " + str(s))
 
-    if np.any(np.isnan(Qz)):
+    if np.any(np.isnan(Qz_data)):
         print("The Qz array contains at least one 'nan' for s= " + str(s))
 
-    del z,Pz,Qz,tau_1,dz,lift_basis,lift,problem,solver1,solver2,pert_norm2,pert_norm1
+    del z,Pz,Qz,tau_1,dz,lift_basis,lift,problem1,problem2,solver1,solver2,pert_norm2,pert_norm1
     gc.collect()
 
-    return G
+    return G#,surf_P, surf_Q

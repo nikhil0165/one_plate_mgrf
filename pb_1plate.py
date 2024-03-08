@@ -52,14 +52,16 @@ def pb_1plate(psi_guess,n_bulk,valency, sigma, domain, epsilon_s):  # psi_guess 
         pert_norm = sum(pert.allreduce_data_norm('c', 2) for pert in solver.perturbations)
         #print('convergence for mean-field PB = ' + str(pert_norm))
     psi.change_scales(1)
-    
-    n_profile = num_concn.nconc_pb(psi['g'],valency,n_bulk)
-    
+
+    psi_data = psi.allgather_data('g')
+    n_profile = num_concn.nconc_pb(psi_data,valency,n_bulk)
     z = np.squeeze(z)
 
     q_profile = calculate.charge_density(n_profile, valency)
-    res= calculate.res_1plate(psi['g'],q_profile,bounds,sigma,epsilon_s)
+    res= calculate.res_1plate(psi_data,q_profile,bounds,sigma,epsilon_s)
     print("Gauss's law residual for mean-field PB is = " + str(res))
 
-    return psi['g'], n_profile,z,psi(z=0).evaluate()['g'][0]
+    surface_psi = psi(z=0).evaluate()['g'][0]
+
+    return psi_data, n_profile,z, surface_psi
 

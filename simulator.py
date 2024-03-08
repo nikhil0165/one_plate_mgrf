@@ -23,7 +23,7 @@ print(f'ncc_cutoff_mgrf = {ncc_cutoff_mgrf}')
 print(f'ncc_cutoff_greens= {ncc_cutoff_greens}')
 print(f'num_ratio = {num_ratio}')
 print(f'tolerance = {tolerance}')
-print(f'domain = {N_grid}')
+print(f'N_grid = {N_grid}')
 
 if cb2_d != 0:
     file_dir = os.getcwd() + '/results-mixture' + str(abs(valency[0]))+ '_' + str(abs(valency[1])) + '_' + str(abs(valency[2]))+ '_' + str(abs(valency[3]))
@@ -41,15 +41,18 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','r') as file:
 
 start = timeit.default_timer()
 
-psi_profile, n_profile, N_exc = calculate.interpolator(psi_profile[N_exc:],n_profile[N_exc:],(0,domain),N_grid)
-print(len(psi_profile))
-print(len(n_profile))
-
+# psi_profile, n_profile, N_exc = calculate.rescaler(psi_profile[N_exc:],n_profile[N_exc:],(0,domain),N_grid)
+# print(len(psi_profile))
+# print(len(n_profile))
+#
 psi_profile,n_profile,uself_profile,q_profile,z,surface_psi,res= mgrf_1plate.mgrf_1plate(psi_profile[N_exc:],n_profile[N_exc:],n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print('MGRF_done')
 print(f'surface_psi = {surface_psi}')
 
 N_exc = np.nonzero(n_profile[:,0])[0][0]
+print(f'N_exc = {N_exc}')
+psi_interp = calculate.interpolator(psi_profile[N_exc:],domain, np.arange(0.1,1.05,0.1)*domain)
+print(psi_interp)
 
 time =timeit.default_timer() - start
 print(f'time = {time}')
@@ -81,7 +84,7 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','w') as file:
 
     # Storing numerical parameters as attributes of the root group
     file.attrs['s_conv'] = s_conv
-    file.attrs['N_grid'] = len(psi_profile) - N_exc
+    file.attrs['N_grid1'] = len(psi_profile) - N_exc
     file.attrs['N_exc'] = N_exc
     file.attrs['quads'] = quads
     file.attrs['grandfe_quads'] = grandfe_quads
@@ -117,6 +120,7 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','w') as file:
     file.create_dataset('uself',data = uself_profile)
     file.create_dataset('charge',data = q_profile)
     file.create_dataset('n_bulk',data =n_bulk)
+    file.create_dataset('psi_interp',data = psi_interp)
 
     # Store scalar variables
     file.attrs['grandfe'] = grandfe # nondimensional
