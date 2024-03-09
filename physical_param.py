@@ -12,7 +12,7 @@ rad_sol_d = max(born_radius1,born_radius2)
 
 domain_d= 20.0 #  this times debye huckel length
 domain_in_d = domain_d # domain length of the initial guess also in debye huckel length units
-sigma_d = -0.1# surface charge density
+sigma_d = -0.65# surface charge density
 sigma_in_d = sigma_d# initial point for starting calculation in case of high surface charge densities
 
 vol_sol_d = 4/3*pi*pow(rad_sol_d*pow(10, -10),3)# volume of solvent molecule assuming its a sphere

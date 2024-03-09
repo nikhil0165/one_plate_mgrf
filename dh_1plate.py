@@ -38,8 +38,8 @@ def dh_1plate(n_bulk,valency,sigma,grid_points,domain,epsilon_s):
     solver = problem.build_solver()
     solver.solve()
 
-    psi_g = psi.allgather_data('g')
-    n_profile = num_concn.nconc_pb(psi_g,valency,n_bulk)
+    psi_profile = psi.allgather_data('g')
+    n_profile = num_concn.nconc_pb(psi_profile,valency,n_bulk)
     surface_psi = psi(z = 0).evaluate()['g'][0]
 
-    return psi_g,n_profile,np.squeeze(z), surface_psi
+    return psi_profile,n_profile,np.squeeze(z), surface_psi

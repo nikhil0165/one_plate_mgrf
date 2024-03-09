@@ -98,8 +98,8 @@ def rescaler(psi_profile,n_profile,bounds,new_grid): # function to change grid p
     nconc1['g'] = n_profile[:,1]
     nconc0.change_scales(new_grid/grid_points)
     nconc1.change_scales(new_grid/grid_points)
-    nconc[:,0] = nconc0['g']
-    nconc[:,1] = nconc1['g']
+    nconc[:,0] = nconc0.allgather_data('g')
+    nconc[:,1] = nconc1.allgather_data('g')
     if n_ions==4:
         nconc2 = dist.Field(name = 'nconc2',bases = zbasis)
         nconc3 = dist.Field(name = 'nconc3',bases = zbasis)
@@ -107,10 +107,10 @@ def rescaler(psi_profile,n_profile,bounds,new_grid): # function to change grid p
         nconc3['g'] = n_profile[:,3]
         nconc2.change_scales(new_grid/grid_points)
         nconc3.change_scales(new_grid/grid_points)
-        nconc[:,2] = nconc2['g']
-        nconc[:,3] = nconc3['g']
+        nconc[:,2] = nconc2.allgather_data('g')
+        nconc[:,3] = nconc3.allgather_data('g')
 
-    return psi['g'], nconc, 0
+    return psi.allgather_data('g'), nconc, 0
 
 
 def res_1plate(psi_profile,q_profile,bounds,sigma,epsilon): # calculate the residual of gauss law

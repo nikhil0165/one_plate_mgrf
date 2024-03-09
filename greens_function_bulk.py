@@ -54,14 +54,14 @@ def Gcap_free(grid_points,s,domain,epsilon):#\hat{Go}
 
 
 def Gcap_full(n_bulk_profile,n_bulk,valency,s,domain,epsilon):# function for \hat{G}
-        
+
     grid_points = len(n_bulk_profile)
     bounds = (0,domain)
     Lz = bounds[1]
 
     # Bases
     coords = d3.CartesianCoordinates('z')
-    dist = d3.Distributor(coords,dtype = np.float64) 
+    dist = d3.Distributor(coords,dtype = np.float64)
     zbasis = d3.Chebyshev(coords['z'],size = grid_points,bounds = bounds,dealias = dealias)
 
     # General fields
@@ -91,6 +91,7 @@ def Gcap_full(n_bulk_profile,n_bulk,valency,s,domain,epsilon):# function for \ha
     # Solver
     solver1 = problem.build_solver(ncc_cutoff = ncc_cutoff_greens)
     pert_norm1 = np.inf
+
     Pz.change_scales(dealias)
     p = 0
     while pert_norm1 > tolerance_greens:

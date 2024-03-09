@@ -10,7 +10,7 @@ def Gcap_free(grid_points,s,domain,epsilon): # function for \hat{Go}
     # Bases
     coords = d3.CartesianCoordinates('z')
     dist = d3.Distributor(coords,dtype = np.float64)  
-    zbasis = d3.Chebyshev(coords['z'],size = grid_points,bounds = bounds,dealias = dealias)
+    zbasis = d3.Chebyshev(coords['z'],size = grid_points,bounds = bounds,dealias = 2)
 
     # General fields
     z = dist.local_grids(zbasis)
