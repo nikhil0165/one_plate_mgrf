@@ -21,7 +21,7 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
 
     # Bulk properties
     n_bulk_numerical = np.multiply(np.ones((grid_points,len(valency))),n_bulk)
-    uself_bulk = selfe_bulk.uselfb_numerical(n_bulk_numerical, n_bulk, rad_ions, valency, domain,epsilon_s)[-1]
+    uself_bulk = selfe_bulk.uselfb_numerical(n_bulk_numerical, n_bulk, rad_ions, valency, domain,epsilon_s)
     eta_bulk = calculate.eta_loc(n_bulk, vol_ions, vol_sol)
     print('selfe_done for bulk')
     # Checking if all molecules have same excluded volume

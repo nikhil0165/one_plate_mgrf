@@ -57,8 +57,8 @@ print(psi_interp)
 time =timeit.default_timer() - start
 print(f'time = {time}')
 
-grandfe = energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
-print(f'grandfe = {grandfe}')
+# grandfe = energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
+# print(f'grandfe = {grandfe}')
 
 
 if cb2_d != 0:
@@ -67,7 +67,7 @@ else:
     file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5))  + '_' + str(round(float(domain_d),2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_d,5)) + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5)) + '_' + str(int(len(psi_profile) - N_exc))
 
 
-# Writing everything in SI units
+### Writing everything in SI units
 with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','w') as file:
 
     # Storing scalar variables as attributes of the root group

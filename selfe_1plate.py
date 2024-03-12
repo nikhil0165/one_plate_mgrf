@@ -1,3 +1,5 @@
+import numpy as np
+
 from packages import *
 import calculate
 from numerical_param import*
@@ -37,6 +39,26 @@ def uself_long(n_profile,n_bulk,valency,domain,epsilon_s, epsilon_p,dist_exc):# 
     v1 = 0.5*V_conv
     v2 = 0.5*V_conv
     weights = v1 * (np.exp(v1 * samples + v2) - 1) * np.exp(v1 * samples + v2) * weights
+    quad_points = np.c_[S,weights]
+    for i in range(0,floor(quads/cores)):
+        with concurrent.futures.ProcessPoolExecutor(max_workers=cores) as executor:
+            answer = {executor.submit(uself_component,n_profile,n_bulk,valency,quad_point,domain,epsilon_s, epsilon_p,dist_exc): quad_point for quad_point in quad_points[i*cores:(i+1)*cores]}
+            for future in concurrent.futures.as_completed(answer):
+                u_long = u_long + future.result()
+    with concurrent.futures.ProcessPoolExecutor(max_workers=cores) as executor:
+            answer = {executor.submit(uself_component,n_profile,n_bulk,valency,quad_point,domain,epsilon_s, epsilon_p,dist_exc): quad_point for quad_point in quad_points[floor(quads/cores)*cores:]}
+            for future in concurrent.futures.as_completed(answer):
+                u_long = u_long + future.result()
+    return u_long
+
+def uself_long_new(n_profile,n_bulk,valency,domain,epsilon_s, epsilon_p,dist_exc):# long range component of self-energy q**2(G-Go)
+    u_long = np.zeros((len(n_profile),len(valency)))
+    samples, weights = np.polynomial.legendre.leggauss(quads)
+    t = 0.5*(samples + 1)
+    S = np.true_divide(1-t,t)#np.power(e,0.5*V_conv*samples + 0.5*V_conv)-1 # transformation of s into v
+    prefactor = np.true_divide(t-1,np.power(t,3))
+    #weights = v1 * (np.exp(v1 * samples + v2) - 1) * np.exp(v1 * samples + v2) * weights
+    weights = prefactor*0.5*weights
     quad_points = np.c_[S,weights]
     for i in range(0,floor(quads/cores)):
         with concurrent.futures.ProcessPoolExecutor(max_workers=cores) as executor:

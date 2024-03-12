@@ -45,6 +45,48 @@ def uself_long_bulk(n_bulk_profile,n_bulk,valency,domain,epsilon): # long range 
                 u_long = u_long + future.result()
     return u_long
 
+def uself_long_st(n_profile,n_bulk,valency,domain,epsilon_s):# long range component of self-energy q**2(G-Go)
+    u_long = np.zeros((len(n_profile),len(valency)))
+    samples, weights = np.polynomial.legendre.leggauss(quads)
+    t = 0.5*(samples + 1)
+    S = np.true_divide(1-t,t)#np.power(e,0.5*V_conv*samples + 0.5*V_conv)-1 # transformation of s into v
+    print(S)
+    prefactor = np.true_divide(t-1,np.power(t,3))
+    #weights = v1 * (np.exp(v1 * samples + v2) - 1) * np.exp(v1 * samples + v2) * weights
+    weights = 0.5*prefactor*weights
+    quad_points = np.c_[S,weights]
+    for i in range(0,floor(quads/cores)):
+        with concurrent.futures.ProcessPoolExecutor(max_workers=cores) as executor:
+            answer = {executor.submit(uself_component_bulk,n_profile,n_bulk,valency,quad_point,domain,epsilon_s): quad_point for quad_point in quad_points[i*cores:(i+1)*cores]}
+            for future in concurrent.futures.as_completed(answer):
+                u_long = u_long + future.result()
+    with concurrent.futures.ProcessPoolExecutor(max_workers=cores) as executor:
+            answer = {executor.submit(uself_component_bulk,n_profile,n_bulk,valency,quad_point,domain,epsilon_s): quad_point for quad_point in quad_points[floor(quads/cores)*cores:]}
+            for future in concurrent.futures.as_completed(answer):
+                u_long = u_long + future.result()
+    return u_long
+
+def uself_long_laguerre(n_profile,n_bulk,valency,domain,epsilon_s):# long range component of self-energy q**2(G-Go)
+    u_long = np.zeros((len(n_profile),len(valency)))
+    samples, weights = np.polynomial.laguerre.laggauss(quads)
+    mu = 0.01
+    S = np.power(e,mu*samples) - 1
+    #S = samples
+    print(S)
+    # weights = samples*weights
+    weights = mu*(np.exp(mu*samples) - 1) * np.exp(mu*samples) * weights
+    quad_points = np.c_[S,weights]
+    for i in range(0,floor(quads/cores)):
+        with concurrent.futures.ProcessPoolExecutor(max_workers=cores) as executor:
+            answer = {executor.submit(uself_component_bulk,n_profile,n_bulk,valency,quad_point,domain,epsilon_s): quad_point for quad_point in quad_points[i*cores:(i+1)*cores]}
+            for future in concurrent.futures.as_completed(answer):
+                u_long = u_long + future.result()
+    with concurrent.futures.ProcessPoolExecutor(max_workers=cores) as executor:
+            answer = {executor.submit(uself_component_bulk,n_profile,n_bulk,valency,quad_point,domain,epsilon_s): quad_point for quad_point in quad_points[floor(quads/cores)*cores:]}
+            for future in concurrent.futures.as_completed(answer):
+                u_long = u_long + future.result()
+    return u_long
+
 def uselfb_numerical(n_bulk_profile,n_bulk,rad_ions,valency,domain,epsilon): # self energy of all ions
     u_short = uself_short( n_bulk_profile,rad_ions,valency,epsilon)
     u_pc = uself_point(n_bulk_profile,valency,epsilon)

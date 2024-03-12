@@ -11,3 +11,4 @@ __pycache__
 *plots*
 *_grid.py*
 make_param.py
+*.h5*
