@@ -85,7 +85,7 @@ I = sum([(valency[i] ** 2) * n_bulk_d[i] / len(valency) for i in range(len(valen
 lambda_d_d = np.sqrt(epsilon_s_d / (beta * pow(ec, 2) * I)) # Debye Screening length
 
 print('domain in Ang = ' +str(domain_d*lambda_d_d/pow(10,-10)))
-
+print(l_c/lambda_d_d)
 ## Scaling the variables with characteristic variables
 
 epsilon_s = epsilon_s_d / epsilon_c
