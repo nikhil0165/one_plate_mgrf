@@ -93,7 +93,7 @@ def Gcap_full(n_profile,n_bulk,valency,s,domain,epsilon_s,epsilon_p,dist_exc): #
     problem1.add_equation("Pz(z=0) = Pzo")
 
     # Initial guess for Pz
-    Pz['g'] = Pzo#omega_b*np.tanh(np.arctanh(Pzo/omega_b) + omega_b*Zg)
+    Pz['g'] = omega_b*np.tanh(np.arctanh(Pzo/omega_b) + omega_b*Zg)
 
     # Solver
     solver1 = problem1.build_solver(ncc_cutoff = ncc_cutoff_greens)
@@ -120,7 +120,7 @@ def Gcap_full(n_profile,n_bulk,valency,s,domain,epsilon_s,epsilon_p,dist_exc): #
     problem2.add_equation("Qz(z=Lz) = Qzo")
 
     # Initial guess for Qz
-    Qz['g'] = Qzo#omega_b*np.tanh(np.arctanh(Qzo/omega_b) + omega_b*(Zg-Lz))
+    Qz['g'] = omega_b*np.tanh(np.arctanh(Qzo/omega_b) + omega_b*(Zg-Lz))
     # Solver
     solver2 = problem2.build_solver(ncc_cutoff = ncc_cutoff_greens)
     pert_norm2 = np.inf
