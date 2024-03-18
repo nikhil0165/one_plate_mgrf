@@ -134,15 +134,12 @@ def Gcap_full(n_profile,n_bulk,valency,s,domain,epsilon_s,epsilon_p,dist_exc): #
     Qz.change_scales(1)
     Qz_data = Qz.allgather_data('g')
 
-
     ## Sturm-Liouville for G
     G = (1 / epsilon_s) * np.true_divide(1,Pz_data - Qz_data)
 
     Gg = dist.Field(name = 'Gg',bases = zbasis)
     Gg['g'] = G
 
-    # surf_P  = Pz(z=Lz).evaluate()['g'][0]
-    # surf_Q = Qz(z=Lz).evaluate()['g'][0]
     if np.any(np.isnan(Pz_data)):
         print("The Pz array contains at least one 'nan' for s= " + str(s))
 

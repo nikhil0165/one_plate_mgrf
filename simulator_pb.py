@@ -48,7 +48,7 @@ print(f'surface_psi = {surface_psi}')
 
 N_exc = np.nonzero(n_profile[:,0])[0][0]
 print(f'N_exc = {N_exc}')
-print(f'domain_array = {domain}')
+print(f'domain = {domain}')
 
 psi_interp = calculate.interpolator(psi_profile[N_exc:],domain, np.arange(0.1,1.05,0.1)*domain)
 print(psi_interp)
@@ -83,7 +83,7 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5', 'w') as file:
     file.attrs['cb1'] = cb1_d
     file.attrs['cb2'] = cb2_d
     file.attrs['surface_charge'] = sigma_d
-    file.attrs['domain_array'] = domain
+    file.attrs['domain'] = domain
     file.attrs['domain_d'] = domain * l_c
 
     # Storing numerical parameters as attributes of the root group

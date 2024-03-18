@@ -57,7 +57,7 @@ print(psi_interp)
 time =timeit.default_timer() - start
 print(f'time = {time}')
 
-# grandfe = energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain_array,epsilon_s, epsilon_p)
+# grandfe = energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 # print(f'grandfe = {grandfe}')
 
 
@@ -79,7 +79,7 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','w') as file:
     file.attrs['cb1'] = cb1_d
     file.attrs['cb2'] = cb2_d
     file.attrs['surface_charge'] = sigma_d
-    file.attrs['domain_array'] = domain
+    file.attrs['domain'] = domain
     file.attrs['domain_d'] = domain * l_c
 
     # Storing numerical parameters as attributes of the root group
