@@ -117,7 +117,7 @@ def mgrf_1plate(psi_guess,nconc_guess,n_bulk,valency,rad_ions,vol_ions,vol_sol,s
             print('converg at iter = ' + str(p) + ' is ' + str(convergence_tot))
 
 
-    #n_profile,uself_profile = num_concn.nconc_complete(psi_g,n_profile,uself_bulk,n_bulk,valency,rad_ions,vol_ions,vol_sol,domain,epsilon_s,epsilon_p)
+    #n_profile,uself_profile = num_concn.nconc_complete(psi_g,n_profile,uself_bulk,n_bulk,valency,rad_ions,vol_ions,vol_sol,domain_array,epsilon_s,epsilon_p)
 
     uself_profile = selfe_1plate.uself_complete(n_profile,n_bulk,rad_ions,valency,domain,epsilon_s,epsilon_p)
     eta_profile = calculate.eta_profile(n_profile,vol_ions,vol_sol)

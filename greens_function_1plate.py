@@ -79,6 +79,7 @@ def Gcap_full(n_profile,n_bulk,valency,s,domain,epsilon_s,epsilon_p,dist_exc): #
     omega_min = min(omega_b,np.min(np.sqrt(omega_sqr['g'])))
     Pzo = s*np.tanh(np.arctanh(epsilon_p/epsilon_s) + s*dist_exc)
     Qzo = -omega_b
+    #omega_b = s
 
     # Fields for G(Pz or log(U))
     Pz = dist.Field(name = 'Pz',bases = zbasis)
@@ -92,7 +93,7 @@ def Gcap_full(n_profile,n_bulk,valency,s,domain,epsilon_s,epsilon_p,dist_exc): #
     problem1.add_equation("Pz(z=0) = Pzo")
 
     # Initial guess for Pz
-    Pz['g'] = omega_b*np.tanh(np.arctanh(Pzo/omega_b) + omega_b*Zg)
+    Pz['g'] = Pzo#omega_b*np.tanh(np.arctanh(Pzo/omega_b) + omega_b*Zg)
 
     # Solver
     solver1 = problem1.build_solver(ncc_cutoff = ncc_cutoff_greens)
@@ -116,10 +117,10 @@ def Gcap_full(n_profile,n_bulk,valency,s,domain,epsilon_s,epsilon_p,dist_exc): #
     problem2.add_equation("-dz(Qz) + omega_sqr + lift(tau_1,-1) = Qz**2")
 
     # Boundary conditions for Qz
-    problem2.add_equation("Qz(z=Lz) = -omega_b")
+    problem2.add_equation("Qz(z=Lz) = Qzo")
 
     # Initial guess for Qz
-    Qz['g'] = omega_b*np.tanh(np.arctanh(Qzo/omega_b) + omega_b*(Zg-Lz))
+    Qz['g'] = Qzo#omega_b*np.tanh(np.arctanh(Qzo/omega_b) + omega_b*(Zg-Lz))
     # Solver
     solver2 = problem2.build_solver(ncc_cutoff = ncc_cutoff_greens)
     pert_norm2 = np.inf

@@ -10,10 +10,10 @@ born_radius1 = 1.5# radius of cation in Angstroms
 born_radius2 = born_radius1 # radius of anion in Angstroms
 rad_sol_d = max(born_radius1,born_radius2)
 
-domain_d= 20.0 #  this times debye huckel length
-domain_in_d = domain_d # domain length of the initial guess also in debye huckel length units
+domain_d= 10.0 #  this times debye huckel length
+domain_in_d = domain_d # domain_array length of the initial guess also in debye huckel length units
 sigma_d = -0.65# surface charge density
-sigma_in_d = -0.1# initial point for starting calculation in case of high surface charge densities
+sigma_in_d = -0.65# initial point for starting calculation in case of high surface charge densities
 
 vol_sol_d = 4/3*pi*pow(rad_sol_d*pow(10, -10),3)# volume of solvent molecule assuming its a sphere
 
@@ -84,7 +84,7 @@ if cb2_d != 0:
 I = sum([(valency[i] ** 2) * n_bulk_d[i] / len(valency) for i in range(len(valency))])
 lambda_d_d = np.sqrt(epsilon_s_d / (beta * pow(ec, 2) * I)) # Debye Screening length
 
-print('domain in Ang = ' +str(domain_d*lambda_d_d/pow(10,-10)))
+print('domain_array in Ang = ' +str(domain_d*lambda_d_d/pow(10,-10)))
 print(l_c/lambda_d_d)
 ## Scaling the variables with characteristic variables
 

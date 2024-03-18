@@ -11,7 +11,7 @@ born_radius2 = 1.0 # radius of anion in Angstroms
 rad_sol_d = max(born_radius1,born_radius2)
 
 domain_d= 50.0 #  this times debye huckel length
-domain_in_d = 50.0 # domain length of the initial guess also in debye huckel length units
+domain_in_d = 50.0 # domain_array length of the initial guess also in debye huckel length units
 sigma_d = -0.01 # surface charge density
 sigma_in_d = -0.01# initial point for starting calculation in case of high surface charge densities
 
@@ -77,7 +77,7 @@ if cb2_d != 0:
 I = sum([(valency[i] ** 2) * n_bulk_d[i] / len(valency) for i in range(len(valency))])
 lambda_d_d = np.sqrt(epsilon_s_d / (beta * pow(ec, 2) * I)) # Debye Screening length
 
-print('domain in Ang = ' +str(domain_d*lambda_d_d/pow(10,-10)))
+print('domain_array in Ang = ' +str(domain_d*lambda_d_d/pow(10,-10)))
 
 ## Scaling the variables with characteristic variables
 

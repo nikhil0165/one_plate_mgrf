@@ -30,7 +30,7 @@ if cb2_d != 0:
     file_name =  str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_in_d),2))+ '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(rad_ions_d[2],2)) + '_' + str(round(rad_ions_d[3],2)) + '_' + str(round(sigma_in_d,5))  + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5)) + '_' + str(int(N_grid))
 else:
     file_dir = os.getcwd() + '/results' + str(abs(valency[0])) + '_' + str(abs(valency[1]))
-    file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_in_d),2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_in_d,5))  + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5)) + '_' + str(int(N_grid))
+    file_name = str(round(cb1_d,9)) + '_' + str(round(cb2_d,5)) + '_' + str(round(float(domain_in_d),2)) + '_' + str(round(rad_ions_d[0],2)) + '_' + str(round(rad_ions_d[1],2)) + '_' + str(round(sigma_in_d,5))  + '_' + str(round(epsilonr_s_d,5)) + '_' + str(round(epsilonr_p_d,5)) + '_' + str(int(4*N_grid))
 
 with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','r') as file:
     # Retrieve psi and nconc
@@ -41,9 +41,9 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','r') as file:
 
 start = timeit.default_timer()
 
-# psi_profile, n_profile, N_exc = calculate.rescaler(psi_profile[N_exc:],n_profile[N_exc:],(0,domain),N_grid)
-# print(len(psi_profile))
-# print(len(n_profile))
+psi_profile, n_profile, N_exc = calculate.rescaler(psi_profile[N_exc:],n_profile[N_exc:],(0,domain),N_grid)
+print(len(psi_profile))
+print(len(n_profile))
 #
 psi_profile,n_profile,uself_profile,q_profile,z,surface_psi,res= mgrf_1plate.mgrf_1plate(psi_profile[N_exc:],n_profile[N_exc:],n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
 print('MGRF_done')
@@ -57,7 +57,7 @@ print(psi_interp)
 time =timeit.default_timer() - start
 print(f'time = {time}')
 
-# grandfe = energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain,epsilon_s, epsilon_p)
+# grandfe = energy_1plate.grandfe_mgrf_1plate(psi_profile,n_profile,uself_profile,n_bulk,valency,rad_ions,vol_ions,vol_sol,sigma,domain_array,epsilon_s, epsilon_p)
 # print(f'grandfe = {grandfe}')
 
 
@@ -79,7 +79,7 @@ with h5py.File(file_dir + '/mgrf_' + file_name + '.h5','w') as file:
     file.attrs['cb1'] = cb1_d
     file.attrs['cb2'] = cb2_d
     file.attrs['surface_charge'] = sigma_d
-    file.attrs['domain'] = domain
+    file.attrs['domain_array'] = domain
     file.attrs['domain_d'] = domain * l_c
 
     # Storing numerical parameters as attributes of the root group

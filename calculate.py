@@ -10,7 +10,7 @@ def charge(psi, valency, n_bulk): # charge at any position for mean-field PB
 def kron_delta(i, j): # implementation of kronecker delta
     return 1 if i == j else 0
 
-def charge_density(n_profile,valency): # charge density in the entire domain
+def charge_density(n_profile,valency): # charge density in the entire domain_array
     q_profile = np.dot(n_profile, valency)
     return q_profile
 
