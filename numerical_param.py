@@ -2,7 +2,7 @@ from packages import *
 
 ## Numerical Parameters
 
-s_conv = 1e5 # approx for infinity for fourier inverse of greens function
+s_conv = 1000 # approx for infinity for fourier inverse of greens function
 V_conv = log(s_conv + 1)  # we do fourier inverse integration in the logspace
 quads = 24 # no of legendre gauss quadrature points for fourier inverse of greens function
 N_grid = 1024# has to be even, since we often use 3/2 for dealiasing
