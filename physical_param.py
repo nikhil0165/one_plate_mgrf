@@ -10,7 +10,7 @@ born_radius1 = 1.5# radius of cation in Angstroms
 born_radius2 = born_radius1 # radius of anion in Angstroms
 rad_sol_d = max(born_radius1,born_radius2)
 
-domain_d= 10.0 #  this times debye huckel length
+domain_d= 20.0 #  this times debye huckel length
 domain_in_d = domain_d # domain_array length of the initial guess also in debye huckel length units
 sigma_d = -0.65# surface charge density
 sigma_in_d = -0.65# initial point for starting calculation in case of high surface charge densities
