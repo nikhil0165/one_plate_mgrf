@@ -6,8 +6,8 @@ cb1_d = 0.5# prinamry salt bulk concentration
 cb2_d = 0.0# secondary salt bulk concentration
 valency1 = [2,-1] # valency of primary salt
 valency2 = [1,-1] # valency of secondary salt
-born_radius1 = 1.0# radius of cation in Angstroms
-born_radius2 = 1.0 # radius of anion in Angstroms
+born_radius1 = 2.0# radius of cation in Angstroms
+born_radius2 = 2.0 # radius of anion in Angstroms
 rad_sol_d = max(born_radius1,born_radius2)
 
 domain_d= 50.0 #  this times debye huckel length
